@@ -1,8 +1,7 @@
 import React, {} from 'react'
 
-import * as styles from './styles.module.scss'
+import styles from './styles.module.scss'
 
-console.log(styles)
 
 type TOpts = { text: string, state: string, pos: number, wrongText: string }
 const RaceText = ({ text, state, pos, wrongText }: TOpts) => {

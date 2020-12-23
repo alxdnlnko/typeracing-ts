@@ -126,7 +126,7 @@ const machineConfig: TRaceMachineConfig = {
         validate: {
           on: {
             '': [
-              { cond: ({ text, pos }) => text.length === pos, target: '#root.finished' },
+              { cond: ({ text, pos }) => text?.length === pos, target: '#root.finished' },
               { cond: ({ curWrongText }) => curWrongText === '', target: 'valid' },
               { target: 'invalid' },
             ]

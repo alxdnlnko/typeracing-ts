@@ -3,7 +3,8 @@
 .cache/
 .vscode/
 build/
+dist/
 node_modules/
 *.log
 *.bk
-
+*.module.scss.d.ts

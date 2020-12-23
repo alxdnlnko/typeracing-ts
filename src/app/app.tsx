@@ -1,13 +1,8 @@
 import React, { useEffect, useState, KeyboardEvent } from 'react'
-import { interpret, EventObject } from 'xstate'
+import { interpret } from 'xstate'
 
 import raceMachine from './race-machine'
 import RaceText from '../race-text'
-
-// const initialText = `
-//   Dolor quos unde ex explicabo temporibus Et numquam officia
-//   nesciunt impedit fugit Vitae velit veritatis in et minus. Dolor porro.
-// `
 
 const initialText = `
   Dolor quos unde ex explicabo temporibus Et numquam officia.
@@ -64,6 +59,8 @@ const App = () => {
 
   return (
     <div>
+      {/*
+
       <div>{text}</div>
       <pre
         style={{
@@ -73,6 +70,7 @@ const App = () => {
         }}
       >{text.slice(0, pos)}</pre>
 
+      */}
       <RaceText text={text} state={state} wrongText={wrongText} pos={pos} />
 
       <pre>{JSON.stringify({ pos, wrongText, state })}</pre>
