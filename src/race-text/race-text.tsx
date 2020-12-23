@@ -3,15 +3,59 @@ import React, {} from 'react'
 import styles from './styles.module.scss'
 
 
+type TLetterInfo = { char: string, state: string }
+type TWordInfo = { text: string, startPos: number, endPos: number }
+type TWordOpts = { word: TWordInfo, pos: number, wrongText: string }
+const Word = ({ word, pos, wrongText }: TWordOpts) => {
+  const wordState =
+    word.endPos < pos ? 'prev'
+    : word.startPos > pos ? 'next'
+    : 'current'
+
+  const letters: Array<TLetterInfo> = word.text
+    .split('')
+    .map((l, i) => ({
+      char: l,
+      state: word.startPos + i < pos ? 'prev'
+        : word.startPos + i > pos ? 'next'
+        : 'current'
+    }))
+
+  return (
+    <span className={styles.word} data-wordstate={wordState}>
+      { letters.map(
+        (l, i) =>
+          <span
+            className={styles.letter}
+            key={i}
+            data-letterstate={l.state}
+          >
+            {l.char}
+          </span>
+      )}
+    </span>
+  )
+}
+
 type TOpts = { text: string, state: string, pos: number, wrongText: string }
 const RaceText = ({ text, state, pos, wrongText }: TOpts) => {
-  const doneText = text.slice(0, pos)
-  const nextText = text.slice(pos)
+  const wordsInfo = text
+    .split(' ')
+    .map(w => `${w} `)
+    .map(w => ({ text: w, startPos: 0, endPos: 0 }))
+
+  let prevWordsLen = 0
+  for (let w of wordsInfo) {
+    w.startPos = prevWordsLen
+    w.endPos = w.startPos + w.text.length - 1
+    prevWordsLen += w.text.length
+  }
+
   return (
     <div className={styles.raceText} data-state={state}>
-      <span className="done-text" style={{opacity: '.5', transform: 'scale(.5)'}}>{doneText}</span>
-      <span className="cursor" style={{borderRight: '2px solid #333'}}></span>
-      <span className="next-text">{nextText}</span>
+      { wordsInfo.map(
+        (w, i) => <Word key={i} word={w} pos={pos} wrongText={wrongText} />
+      )}
     </div>
   )
 }

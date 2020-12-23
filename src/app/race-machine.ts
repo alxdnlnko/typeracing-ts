@@ -111,7 +111,7 @@ const machineConfig: TRaceMachineConfig = {
             ],
             DELETE_WORD: [
               {
-                actions: assign({ curWrongText: '' }),
+                actions: assign({ curWrongText: (_) => '' }),
                 target: 'validate',
               }
             ],
