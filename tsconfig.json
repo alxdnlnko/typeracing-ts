@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./src",
     "module": "ES2015",
-    "target": "es5",
+    "target": "es6",
     "strict": true,
     "jsx": "react",
     "strictNullChecks": false,

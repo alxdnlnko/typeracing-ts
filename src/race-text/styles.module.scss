@@ -14,23 +14,10 @@
   // margin-right: 6px;
   margin-bottom: 4px;
 
-  .raceText[data-state~="race"] &[data-wordstate="prev"] {
-    opacity: .5;
-  }
-  .raceText[data-state~="race"] &[data-wordstate="current"] {
-    &::before {
-      content: "";
-      display: block;
-      position: absolute;
-      bottom: -4px;
-      right: -4px;
-      left: -4px;
-      height: 2px;
-      border-radius: 2px;
-      background: rgba(0,0,0,.12);
-    }
-  }
-  .raceText[data-state~="race"] &[data-wordstate="next"] {
+  .raceText[data-state~="race"] & {
+    &[data-wordstate="prev"] { }
+    &[data-wordstate="current"] { }
+    &[data-wordstate="next"] { }
   }
 }
 
@@ -39,24 +26,44 @@
   display: inline-block;
   white-space: pre;
 
-  transition: all .1s ease-out;
+  transition: all .08s ease-out;
 
-  .raceText[data-state~="race"] &[data-letterstate="prev"] {
-    opacity: .5;
-    transform: scale(.8);
-  }
-  .raceText[data-state~="race"] &[data-letterstate="current"] {
-    &::before {
-      content: "";
-      display: block;
-      position: absolute;
-      left: -1px;
-      bottom: -1px;
-      width: 2px;
-      height: 24px;
-      background: #333;
+  .raceText[data-state~="race"] & {
+    &[data-letterstate="prev"] {
+      opacity: .5;
+      transform: scale(.85);
     }
+    &[data-letterstate="current"] {
+      &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: -2px;
+        bottom: -1px;
+        width: 2px;
+        height: 24px;
+        background: rgb(0,0,0,.8);
+      }
+    }
+    &[data-letterstate="next"] { }
   }
-  .raceText[data-state~="race"] &[data-letterstate="next"] {
+}
+
+.letter {
+  .word[data-wordstate="current"] & {
+    &[data-letterstate="current"]:not(:last-child),
+    &[data-letterstate="next"]:not(:last-child) {
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: -3px;
+        right: 0;
+        left: 0;
+        height: 2px;
+        border-radius: 2px;
+        background: rgba(0,0,0,.12);
+      }
+    }
   }
 }

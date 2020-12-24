@@ -3,6 +3,10 @@ import { interpret } from 'xstate'
 
 import raceMachine from './race-machine'
 import RaceText from '../race-text'
+import CurrentWordInput from './current-word-input'
+
+import styles from './styles.module.scss'
+
 
 const initialText = `
   Dolor quos unde ex explicabo temporibus Et numquam officia.
@@ -58,33 +62,23 @@ const App = () => {
   const color = isFinished ? 'green' : isValid ? '#aaa' : 'red'
 
   return (
-    <div>
-      {/*
-
-      <div>{text}</div>
-      <pre
-        style={{
-          background: color,
-          display: 'inline-block',
-          padding: '8px'
-        }}
-      >{text.slice(0, pos)}</pre>
-
-      */}
+    <div className={styles.app}>
       <RaceText text={text} state={state} wrongText={wrongText} pos={pos} />
-
-      <pre>{JSON.stringify({ pos, wrongText, state })}</pre>
 
       <div>
         <input type="text"
           value={val}
           onKeyDown={handleKeyDown}
-          onChange={() => null}
           style={{
-            opacity: '0'
+            // opacity: '0'
           }}
         />
       </div>
+      <div>
+        <CurrentWordInput text={text} pos={pos} wrongText={wrongText} />
+      </div>
+
+      <pre>{JSON.stringify({ pos, wrongText, state })}</pre>
     </div>
   )
 }

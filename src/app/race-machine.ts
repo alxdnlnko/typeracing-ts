@@ -54,8 +54,9 @@ const machineConfig: TRaceMachineConfig = {
                 .replace(/\r\n/, ' ')
                 .replace(/ +/, ' ')
                 .trim(),
-            pos: 0,
-            curWrongText: '' }),
+            pos: (_) => 0,
+            curWrongText: (_) => '',
+          }),
         }
       }
     },
@@ -70,20 +71,20 @@ const machineConfig: TRaceMachineConfig = {
         valid: {
           on: {
             DELETE_CHAR: {
-              actions: assign({ pos: ctx => Math.max(ctx.pos - 1, 0) }),
+              actions: assign({
+                pos: ({ text, pos }) =>
+                  pos === 0 || text[pos - 1] === ' '
+                    ? pos
+                    : pos - 1
+              }),
               target: 'validate',
             },
             DELETE_WORD: {
               actions: assign({
                 pos: ({ text, pos }) =>
-                  text[Math.max(pos - 1, 0)] === ' '
-                    ? Math.max(
-                      text
-                        .replace(/ +$/, ' ')
-                        .slice(0, pos-1)
-                        .lastIndexOf(' ') + 1,
-                      0)
-                    : Math.max(text.slice(0, pos).lastIndexOf(' ') + 1, 0),
+                  pos === 0 || text[pos - 1] === ' '  // prevent deleting prev word
+                    ? pos
+                    : text.slice(0, pos).lastIndexOf(' ') + 1
               }),
               target: 'validate',
             },
@@ -111,13 +112,21 @@ const machineConfig: TRaceMachineConfig = {
             ],
             DELETE_WORD: [
               {
-                actions: assign({ curWrongText: (_) => '' }),
+                actions: assign({
+                  curWrongText: (_) => '',
+                  pos: ({ text, pos }) =>
+                    pos === 0 || text[pos-1] === ' '
+                      ? pos
+                      : text.slice(0, pos).lastIndexOf(' ') + 1,
+                }),
                 target: 'validate',
               }
             ],
             DELETE_CHAR: [
               {
-                actions: assign({ curWrongText: ({ curWrongText }) => curWrongText.slice(0, -1) }),
+                actions: assign({
+                  curWrongText: ({ curWrongText }) => curWrongText.slice(0, -1),
+                }),
                 target: 'validate',
               }
             ],
