@@ -1,23 +1,32 @@
 import React, { useEffect, useState, KeyboardEvent } from 'react'
 import { interpret } from 'xstate'
 
-import raceMachine from './race-machine'
-import RaceText from '../race-text'
-import CurrentWordInput from './current-word-input'
-
 import styles from './styles.module.scss'
 
+import raceMachine from '/services/race-machine'
 
-const initialText = `
-  Dolor quos unde ex explicabo temporibus Et numquam officia.
+import RaceText from './race-text'
+import RaceInput from './race-input'
+
+
+const Book = () => {
+  return (
+    <div className={styles.book}>
+      <span>Дочь горного короля, отр. 20</span>
+    </div>
+  )
+}
+
+const initialText = `Баллистар знал, что на всем белом свете Сигурни дороги
+только эти два создания – собака Леди и ястреб Эбби.
+Девушка натаскивала обеих для совместной охоты. Леди поднимала зайцев,
+Эбби стрелой бросалась с дерева на добычу. Но если заяц был только один,
+между гончей и птицей начиналось соперничество.
 `
-
-// const raceService = interpret(raceMachine.withContext({ ...raceMachine.context, text }))
 const raceService = interpret(raceMachine)
 raceService.start()
 
-
-const App = () => {
+const Race = () => {
   const [ text, setText ] = useState<string>('')
   const [ pos, setPos ] = useState<number>(0)
   const [ val, setVal ] = useState<string>('')
@@ -37,6 +46,7 @@ const App = () => {
 
       console.log(state)
     })
+
     raceService.send({ type: 'INIT', text: initialText })
     return () => sub.unsubscribe()
   }, [])
@@ -59,27 +69,21 @@ const App = () => {
     raceService.send({ type: 'KEY_DOWN', key })
   }
 
-  const color = isFinished ? 'green' : isValid ? '#aaa' : 'red'
-
   return (
-    <div className={styles.app}>
-      <RaceText text={text} state={state} wrongText={wrongText} pos={pos} />
+    <div className={styles.race} data-state={state}>
+      <Book />
+      <RaceText text={text} pos={pos} />
+      <RaceInput />
 
-      <div>
-        <input type="text"
-          value={val}
-          onKeyDown={handleKeyDown}
-          style={{
-            // opacity: '0'
-          }}
-        />
-      </div>
-      <div>
-        <CurrentWordInput text={text} pos={pos} wrongText={wrongText} />
-      </div>
-
-      <pre>{JSON.stringify({ pos, wrongText, state })}</pre>
+      <input type="text"
+        value={val}
+        onKeyDown={handleKeyDown}
+        onChange={() => false}
+        style={{
+          opacity: '0'
+        }}
+      />
     </div>
   )
 }
-export default App
+export default Race
