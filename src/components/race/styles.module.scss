@@ -1,8 +1,22 @@
 .book {
-  position: relative;
   > span {
     font-style: italic;
     color: var(--color-text-secondary);
+    cursor: pointer;
+
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 1px;
+      border-bottom: 1px dashed rgba(255,255,255,.24);
+    }
+
+    &:hover::after {
+      border-color: rgba(255,255,255,.5);
+    }
   }
 }
 
@@ -21,6 +35,28 @@
 
 .word {
   white-space: nowrap;
+
+  .race[data-state~="race"] & {
+    &[data-wordstate="current"] {
+      &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: -.1em;
+        bottom: -.1em;
+        right: .2em;
+        top: -.1em;
+        background: rgba(255,255,255,.05);
+        border-radius: .2em;
+
+        animation: highlight-word .3s ease-out;
+        animation-fill-mode: backwards;
+        @keyframes highlight-word {
+          from { transform: translateX(-5px); }
+        }
+      }
+    }
+  }
 }
 
 .letter {
@@ -48,6 +84,13 @@
         width: 2px;
         height: 1.4em;
         background: var(--cursor-bg);
+
+        animation: cursor-move .11s ease-out;
+        animation-fill-mode: backwards;
+        transform-origin: center bottom;
+        @keyframes cursor-move {
+          from { transform: translateX(-5px); }
+        }
       }
     }
   }
@@ -59,13 +102,13 @@
   }
   .race[data-state~="race.invalid"] & {
     &[data-letterstate="current"] {
-      --cursor-bg: #ff3d00;
+      --cursor-bg: var(--color-red);
 
-      animation: highlight-letter .1s ease-out;
+      animation: highlight-error-letter .2s ease-out;
       animation-fill-mode: backwards;
-      @keyframes highlight-letter {
+      @keyframes highlight-error-letter {
         from {
-          color: #ff3d00;
+          color: var(--color-red);
           transform: scale(1.4);
         }
       }
@@ -75,9 +118,10 @@
 
 .input {
   font-size: 1.6em;
-  padding: .6em;
+  padding: .5em;
   margin-top: 2.1rem;
   width: 100%;
+  height: 2.5em;
 
   &::before {
     content: "";
@@ -89,5 +133,40 @@
     display: block;
     border: 2px solid var(--color-text-primary);
     border-radius: .2em;
+  }
+}
+.inputCurrentWord {
+  position: relative;
+}
+.inputWrongText {
+  display: inline-block;
+
+  .race[data-state~="race.invalid"] & {
+    &::before {
+      content: "";
+      position: absolute;
+      left: -1px;
+      right: -1px;
+      bottom: -1px;
+      top: -1px;
+      display: block;
+      background: var(--color-red);
+      border-radius: .2em;
+      z-index: -1;
+    }
+  }
+}
+.inputCursor {
+  display: inline-block;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    bottom: -.3em;
+    display: block;
+    width: 2px;
+    height: 1.3em;
+    background: var(--color-text-primary);
   }
 }

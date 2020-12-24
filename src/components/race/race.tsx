@@ -73,7 +73,7 @@ const Race = () => {
     <div className={styles.race} data-state={state}>
       <Book />
       <RaceText text={text} pos={pos} />
-      <RaceInput />
+      <RaceInput text={text} pos={pos} wrongText={wrongText} />
 
       <input type="text"
         value={val}

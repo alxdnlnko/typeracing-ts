@@ -5,8 +5,8 @@ import styles from './styles.module.scss'
 
 type TLetterInfo = { char: string, state: string }
 type TWordInfo = { text: string, startPos: number, endPos: number, ind: number }
-type TWordOpts = { word: TWordInfo, pos: number, wrongText: string }
-const Word = ({ word, pos, wrongText }: TWordOpts) => {
+type TWordOpts = { word: TWordInfo, pos: number }
+const RaceWord = ({ word, pos }: TWordOpts) => {
   const wordState =
     word.endPos < pos ? 'prev'
     : word.startPos > pos ? 'next'
@@ -40,41 +40,4 @@ const Word = ({ word, pos, wrongText }: TWordOpts) => {
     </span>
   )
 }
-
-type TOpts = {
-  text: string,
-  state: string,
-  pos: number,
-  wrongText: string
-}
-const RaceText = ({ text, state, pos, wrongText }: TOpts) => {
-  const wordsInfo = text
-    .split(' ')
-    .map(w => `${w} `)
-    .map(w => ({ text: w, startPos: 0, endPos: 0, ind: 0 }))
-
-  let prevWordsLen = 0
-  let ind = 0
-  for (let w of wordsInfo) {
-    w.ind = ind++
-    w.startPos = prevWordsLen
-    w.endPos = w.startPos + w.text.length - 1
-    prevWordsLen += w.text.length
-  }
-
-  return (
-    <div className={styles.raceText} data-state={state}>
-      { wordsInfo.map(
-        (w, i) =>
-          <Word
-            key={i}
-            word={w}
-            pos={pos}
-            wrongText={wrongText}
-          />
-      )}
-    </div>
-  )
-}
-export default RaceText
-
+export default RaceWord

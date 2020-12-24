@@ -2,7 +2,7 @@ import React from 'react'
 
 import styles from './styles.module.scss'
 
-import RaceTextWord from './race-text-word'
+import RaceWord from './race-word'
 
 
 type TProps = { text: string, pos: number }
@@ -25,7 +25,7 @@ const RaceText = ({ text, pos }: TProps) => {
     <div className={styles.text}>
       { wordsInfo.map(
         (w, i) =>
-          <RaceTextWord
+          <RaceWord
             key={i}
             word={w}
             pos={pos}
