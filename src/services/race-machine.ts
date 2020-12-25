@@ -10,7 +10,7 @@ import {
 interface TRaceContext {
   text: string|null
   pos: number
-  curWrongText: string
+  wrongText: string
 }
 
 interface TRaceStateSchema {
@@ -46,7 +46,7 @@ const machineConfig: TRaceMachineConfig = {
   context: {
     text: null,
     pos: 0,
-    curWrongText: '',
+    wrongText: '',
   },
   states: {
     init: {
@@ -61,7 +61,7 @@ const machineConfig: TRaceMachineConfig = {
                 .replace(/–/g, '-')
                 .trim(),
             pos: (_) => 0,
-            curWrongText: (_) => '',
+            wrongText: (_) => '',
           }),
         }
       }
@@ -176,8 +176,8 @@ const machine = createMachine(machineConfig, {
   guards: {
     keyMatchesCurrentPos: ({ text, pos }, e) =>
       e.type === 'KEY_DOWN' && e.key === text[pos],
-    hasAnyText: ({ text, pos, curWrongText }) =>
-      pos > 0 && text[pos-1] !== ' ' || curWrongText.length > 0,
+    hasAnyText: ({ text, pos, wrongText }) =>
+      pos > 0 && text[pos-1] !== ' ' || wrongText.length > 0,
     keyMatchesStartOfCurrentWord: ({ text, pos }, e) => {
       if (e.type !== 'KEY_DOWN') return false
       const wordPos = pos === 0 || text[pos-1] === ' '
@@ -186,15 +186,15 @@ const machine = createMachine(machineConfig, {
       return text[wordPos] === e.key
     },
     isFinished: ({ text, pos }) => text?.length === pos,
-    isValid: ({ curWrongText }) => curWrongText === '',
-    wrongTextHasSpacesInMiddle: ({ curWrongText }) =>  / [^ ]/.test(curWrongText),
+    isValid: ({ wrongText }) => wrongText === '',
+    wrongTextHasSpacesInMiddle: ({ wrongText }) =>  / [^ ]/.test(wrongText),
   },
   actions: {
     incPos: assign({ pos: ({ pos }) => pos + 1 }),
     addKeyToWrongText: assign({
-      curWrongText: ({ curWrongText }, e) => e.type === 'KEY_DOWN'
-        ? curWrongText + e.key
-        : curWrongText
+      wrongText: ({ wrongText }, e) => e.type === 'KEY_DOWN'
+        ? wrongText + e.key
+        : wrongText
     }),
     deleteOneCharOfCurrentWord:
       assign({
@@ -212,7 +212,7 @@ const machine = createMachine(machineConfig, {
       }),
     deleteCurrentWordAndClearWrongText:
       assign({
-        curWrongText: (_) => '',
+        wrongText: (_) => '',
         pos: ({ text, pos }) =>
           pos === 0 || text[pos-1] === ' '
             ? pos
@@ -220,11 +220,11 @@ const machine = createMachine(machineConfig, {
       }),
     deleteOneWrongChar:
       assign({
-        curWrongText: ({ curWrongText }) => curWrongText.slice(0, -1),
+        wrongText: ({ wrongText }) => wrongText.slice(0, -1),
       }),
     deleteCurrentWordAndWrongTextAndIncPos:
       assign({
-        curWrongText: (_) => '',
+        wrongText: (_) => '',
         pos: ({ text, pos }) =>
           pos === 0 || text[pos-1] === ' '
             ? pos + 1
@@ -232,10 +232,10 @@ const machine = createMachine(machineConfig, {
       }),
     deleteCurrentWordAndWrongTextAndAddKeyToWrongText:
       assign({
-        curWrongText: ({ curWrongText }, e) =>
+        wrongText: ({ wrongText }, e) =>
           e.type === 'KEY_DOWN'
-            ? curWrongText + e.key
-            : curWrongText,
+            ? wrongText + e.key
+            : wrongText,
         pos: ({ text, pos }) =>
           pos === 0 || text[pos-1] === ' '
             ? pos
@@ -243,9 +243,9 @@ const machine = createMachine(machineConfig, {
       }),
     deleteLastWordFromWrongText:
       assign({
-        curWrongText: ({ curWrongText }) =>
-          curWrongText.slice(
-            0, Math.max(curWrongText.replace(/[ ]+$/, '').lastIndexOf(' '), 0))
+        wrongText: ({ wrongText }) =>
+          wrongText.slice(
+            0, Math.max(wrongText.replace(/[ ]+$/, '').lastIndexOf(' '), 0))
       })
   }
 })

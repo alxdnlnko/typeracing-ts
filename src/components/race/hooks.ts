@@ -16,7 +16,7 @@ export const useRaceService = (raceService: TRaceService) => {
       setInfo({
         text: state.context.text,
         pos: state.context.pos,
-        wrongText: state.context.curWrongText,
+        wrongText: state.context.wrongText,
         state: state.toStrings().join(' '),
       })
       // console.log(state)
