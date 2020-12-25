@@ -19,6 +19,7 @@ interface TRaceStateSchema {
       states: {
         valid: {}
         invalid: {}
+        selected: {}
         validate: {}
       }
     }
@@ -31,6 +32,7 @@ type TRaceEvent =
   | { type: 'KEY_DOWN', key: string }
   | { type: 'DELETE_CHAR' }
   | { type: 'DELETE_WORD' }
+  | { type: 'SELECT_ALL' }
 
 type TRaceMachineConfig = MachineConfig<TRaceContext, TRaceStateSchema, TRaceEvent>
 
@@ -98,7 +100,8 @@ const machineConfig: TRaceMachineConfig = {
                 actions: assign({ curWrongText: (ctx, e) => ctx.curWrongText + e.key }),
                 target: 'validate',
               },
-            ]
+            ],
+            SELECT_ALL: 'selected',
           }
         },
         invalid: {
@@ -130,6 +133,63 @@ const machineConfig: TRaceMachineConfig = {
                 target: 'validate',
               }
             ],
+            SELECT_ALL: 'selected',
+          }
+        },
+        selected: {
+          on: {
+            KEY_DOWN: [
+              {  // key matches the beginning of current word
+                cond: ({ text, pos }, { key }) => {
+                  const wordPos = pos === 0 || text[pos-1] === ' '
+                    ? pos
+                    : text.slice(0, pos).lastIndexOf(' ') + 1
+                  return text[wordPos] === key
+                },
+                actions: assign({
+                  curWrongText: (_) => '',
+                  pos: ({ text, pos }) =>
+                    pos === 0 || text[pos-1] === ' '
+                      ? pos + 1
+                      : text.slice(0, pos).lastIndexOf(' ') + 2
+                }),
+                target: 'validate',
+              },
+              {
+                actions: assign({
+                  curWrongText: (ctx, e) => ctx.curWrongText + e.key,
+                  pos: ({ text, pos }) =>
+                    pos === 0 || text[pos-1] === ' '
+                      ? pos
+                      : text.slice(0, pos).lastIndexOf(' ') + 1,
+                }),
+                target: 'validate',
+              },
+            ],
+            DELETE_CHAR: [
+              {
+                actions: assign({
+                  curWrongText: (_) => '',
+                  pos: ({ text, pos }) =>
+                    pos === 0 || text[pos-1] === ' '
+                      ? pos
+                      : text.slice(0, pos).lastIndexOf(' ') + 1,
+                }),
+                target: 'validate',
+              }
+            ],
+            DELETE_WORD: [
+              {
+                actions: assign({
+                  curWrongText: (_) => '',
+                  pos: ({ text, pos }) =>
+                    pos === 0 || text[pos-1] === ' '
+                      ? pos
+                      : text.slice(0, pos).lastIndexOf(' ') + 1,
+                }),
+                target: 'validate',
+              }
+            ]
           }
         },
         validate: {

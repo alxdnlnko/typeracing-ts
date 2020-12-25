@@ -19,7 +19,7 @@ const RaceInput = ({ text, pos, wrongText }: TProps) => {
   const startInd = Math.max(
     text
       .slice(0, Math.max(pos, 0))
-      .lastIndexOf(' '),
+      .lastIndexOf(' ') + 1,
     0
   )
   const curWord = pos === text.length
@@ -28,9 +28,11 @@ const RaceInput = ({ text, pos, wrongText }: TProps) => {
 
   return (
     <div className={styles.input}>
-      <span className={styles.inputCurrentWord}>{curWord}</span>
-      <span className={styles.inputWrongText}>{wrongText}</span>
-      <span ref={cursorRef} className={styles.inputCursor}></span>
+      <span className={styles.inputWrapper}>
+        <span className={styles.inputCurrentWord}>{curWord}</span>
+        <span className={styles.inputWrongText}>{wrongText}</span>
+        <span ref={cursorRef} className={styles.inputCursor}></span>
+      </span>
     </div>
   )
 }

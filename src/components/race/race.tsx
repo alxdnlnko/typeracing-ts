@@ -61,9 +61,18 @@ const Race = () => {
     }
     setVal('')
     const { key } = e
+
+    if (e.ctrlKey && e.keyCode === 65) {  // ctrl + a
+      raceService.send({ type: 'SELECT_ALL' })
+      e.preventDefault()
+      return
+    }
     if (key === 'Backspace') {
       if (e.ctrlKey) raceService.send({ type: 'DELETE_WORD' })
       else raceService.send({ type: 'DELETE_CHAR' })
+      return
+    }
+    if (e.ctrlKey) {
       return
     }
     if (key.length !== 1) {

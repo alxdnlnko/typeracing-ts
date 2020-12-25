@@ -4,6 +4,7 @@
   align-items: center;
 
   > svg {
+    top: 1px;
     display: inline-block;
     height: 1.3em;
     width: auto;
@@ -137,6 +138,7 @@
   width: 100%;
   height: 2.5em;
   color: var(--text-color);
+  white-space: pre;
 
   &::before {
     content: "";
@@ -153,6 +155,22 @@
   .race[data-focused="true"] & {
     --text-color: var(--color-text-primary);
     --border-color: var(--color-text-primary);
+  }
+}
+.inputWrapper {
+  display: inline-block;
+
+  .race[data-state~="race.selected"] & {
+    &::before {
+      content: "";
+      position: absolute;
+      left: -.1em;
+      right: -.1em;
+      bottom: -.1em;
+      top: -.1em;
+      display: block;
+      background: rgba(255,255,255,.32);
+    }
   }
 }
 .inputCurrentWord {
@@ -201,6 +219,11 @@
     animation-delay: .5s;
     @keyframes pulse-cursor {
       to { opacity: .3; }
+    }
+  }
+  .race[data-state~='race.selected'] & {
+    &::before {
+      display: none;
     }
   }
 }
