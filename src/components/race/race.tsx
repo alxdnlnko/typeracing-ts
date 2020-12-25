@@ -21,9 +21,9 @@ const Book = () => {
 }
 
 const initialText = `
-  I read considerable to Jim about kings and dukes and earls and such,
-  and how gaudy they dressed, and how much style they put on, and called each other your majesty,
-  and your grace, and your lordship, and so on, 'stead of mister; and Jim's eyes bugged out, and he was interested.
+  Я первый раз переживал подлинную, поднимавшуюся над самим собой мудрость,
+  даже боль и смерть не ощущавшуюся личным переживанием,
+  а считавшуюся надличностным объектом рассмотрения и наблюдения.
 `
 
 const raceService = interpret(raceMachine)
@@ -73,7 +73,13 @@ const Race = () => {
     <div className={styles.race} data-state={raceInfo.state} data-focused={isFocused}>
       <Book />
       <RaceText text={raceInfo.text} pos={raceInfo.pos} hideCursor={true} />
-      <RaceInput text={raceInfo.text} pos={raceInfo.pos} wrongText={raceInfo.wrongText} onClick={() => onInputClick()} />
+      <RaceInput
+        text={raceInfo.text}
+        pos={raceInfo.pos}
+        wrongText={raceInfo.wrongText}
+        speed={raceInfo.speed}
+        onClick={() => onInputClick()}
+      />
 
       <input type="text"
         ref={inputRef}

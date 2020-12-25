@@ -11,6 +11,9 @@ interface TRaceContext {
   text: string|null
   pos: number
   wrongText: string
+  raceStartTime: number
+  speed: number
+  errorsCount: number
 }
 
 interface TRaceStateSchema {
@@ -47,6 +50,9 @@ const machineConfig: TRaceMachineConfig = {
     text: null,
     pos: 0,
     wrongText: '',
+    raceStartTime: -1,
+    speed: 0,
+    errorsCount: 0
   },
   states: {
     init: {
@@ -62,6 +68,9 @@ const machineConfig: TRaceMachineConfig = {
                 .trim(),
             pos: (_) => 0,
             wrongText: (_) => '',
+            raceStartTime: (_) => -1,
+            speed: (_) => 0,
+            errorsCount: (_) => 0,
           }),
         }
       }
@@ -73,6 +82,7 @@ const machineConfig: TRaceMachineConfig = {
     },
     race: {
       initial: 'valid',
+      entry: 'setRaceStartTime',
       states: {
         valid: {
           on: {
@@ -87,7 +97,7 @@ const machineConfig: TRaceMachineConfig = {
             KEY_DOWN: [
               {
                 cond: 'keyMatchesCurrentPos',
-                actions: 'incPos',
+                actions: [ 'incPos', 'updateSpeed' ],
                 target: 'validate',
               },
               {
@@ -246,7 +256,19 @@ const machine = createMachine(machineConfig, {
         wrongText: ({ wrongText }) =>
           wrongText.slice(
             0, Math.max(wrongText.replace(/[ ]+$/, '').lastIndexOf(' '), 0))
-      })
+      }),
+    setRaceStartTime:
+      assign({
+        raceStartTime: (_) => +new Date(),
+      }),
+    updateSpeed:
+      assign({
+        speed: ({ pos, raceStartTime, speed }, e) => {
+          if (e.type !== 'KEY_DOWN') return speed
+          const minutes = (+new Date() - raceStartTime) / (1000 * 60)
+          return pos / minutes
+        },
+      }),
   }
 })
 export default machine

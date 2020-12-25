@@ -240,3 +240,11 @@
     }
   }
 }
+
+.stats {
+  position: absolute;
+  right: 0;
+  bottom: -1.8em;
+  font-size: .6em;
+  color: var(--color-text-grey);
+}
