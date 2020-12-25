@@ -20,8 +20,8 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "plugins": [
-    ],
+    "typeRoots": [ "./src/typings" ],
+    "plugins": [ ],
 
     "lib": [
       "dom",

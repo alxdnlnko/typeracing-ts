@@ -49,6 +49,12 @@ module.exports = {
       },
 
       {
+        test: /\.svg$/,
+        loader: '@svgr/webpack',
+        options: { icon: true, typescript: false },
+      },
+
+      {
         test: /\.module\.s(a|c)ss$/,
         use: [
           isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,

@@ -2,6 +2,7 @@ import React, { useEffect, useState, KeyboardEvent } from 'react'
 import { interpret } from 'xstate'
 
 import styles from './styles.module.scss'
+import BookIcon from './icons/book.svg'
 
 import raceMachine from '/services/race-machine'
 
@@ -12,6 +13,7 @@ import RaceInput from './race-input'
 const Book = () => {
   return (
     <div className={styles.book}>
+      <BookIcon />
       <span>Дочь горного короля, отр. 20</span>
     </div>
   )
@@ -34,6 +36,7 @@ const Race = () => {
   const [ isFinished, setFinished ] = useState<boolean>(false)
   const [ wrongText, setWrongText ] = useState<string>('')
   const [ state, setState ] = useState<string>('')
+  const [ isFocused, setFocused ] = useState<boolean>(false)
 
   useEffect(() => {
     const sub = raceService.subscribe(state => {
@@ -70,15 +73,18 @@ const Race = () => {
   }
 
   return (
-    <div className={styles.race} data-state={state}>
+    <div className={styles.race} data-state={state} data-focused={isFocused}>
       <Book />
       <RaceText text={text} pos={pos} />
       <RaceInput text={text} pos={pos} wrongText={wrongText} />
 
       <input type="text"
         value={val}
+        autoFocus
         onKeyDown={handleKeyDown}
         onChange={() => false}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         style={{
           opacity: '0'
         }}

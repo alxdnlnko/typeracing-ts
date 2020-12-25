@@ -1,5 +1,16 @@
 .book {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  > svg {
+    display: inline-block;
+    height: 1.3em;
+    width: auto;
+  }
   > span {
+    display: inline-block;
+    margin-left: .5em;
     font-style: italic;
     color: var(--color-text-secondary);
     cursor: pointer;
@@ -117,11 +128,15 @@
 }
 
 .input {
+  --text-color: var(--color-text-gray);
+  --border-color: var(--color-text-gray);
+
   font-size: 1.6em;
   padding: .5em;
   margin-top: 2.1rem;
   width: 100%;
   height: 2.5em;
+  color: var(--text-color);
 
   &::before {
     content: "";
@@ -131,8 +146,13 @@
     right: 0;
     bottom: 0;
     display: block;
-    border: 2px solid var(--color-text-primary);
+    border: 2px solid var(--border-color);
     border-radius: .2em;
+  }
+
+  .race[data-focused="true"] & {
+    --text-color: var(--color-text-primary);
+    --border-color: var(--color-text-primary);
   }
 }
 .inputCurrentWord {
@@ -157,6 +177,8 @@
   }
 }
 .inputCursor {
+  --cursor-color: var(--color-text-gray);
+
   display: inline-block;
 
   &::before {
@@ -167,6 +189,18 @@
     display: block;
     width: 2px;
     height: 1.3em;
-    background: var(--color-text-primary);
+    background: var(--cursor-color);
+
+  }
+
+  .race[data-focused="true"] & {
+    --cursor-color: var(--color-text-primary);
+
+    animation: pulse-cursor 1s infinite;
+    animation-fill-mode: backwards;
+    animation-delay: .5s;
+    @keyframes pulse-cursor {
+      to { opacity: .3; }
+    }
   }
 }
