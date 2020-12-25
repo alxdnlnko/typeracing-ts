@@ -1,10 +1,11 @@
-import React, { useEffect, useState, KeyboardEvent, useRef } from 'react'
+import React, { useEffect, useState, KeyboardEvent, useRef, useCallback } from 'react'
 import { interpret } from 'xstate'
 
 import styles from './styles.module.scss'
 import BookIcon from './icons/book.svg'
 
 import raceMachine from '/services/race-machine'
+import { useRaceService } from './hooks'
 
 import RaceText from './race-text'
 import RaceInput from './race-input'
@@ -14,54 +15,35 @@ const Book = () => {
   return (
     <div className={styles.book}>
       <BookIcon />
-      <span>Дочь горного короля, отр. 20</span>
+      <span>The Adventures of Huckleberry Finn, part 208</span>
     </div>
   )
 }
 
-const initialText = `Баллистар знал, что на всем белом свете Сигурни дороги
-только эти два создания – собака Леди и ястреб Эбби.
-Девушка натаскивала обеих для совместной охоты. Леди поднимала зайцев,
-Эбби стрелой бросалась с дерева на добычу. Но если заяц был только один,
-между гончей и птицей начиналось соперничество.
+const initialText = `
+  I read considerable to Jim about kings and dukes and earls and such,
+  and how gaudy they dressed, and how much style they put on, and called each other your majesty,
+  and your grace, and your lordship, and so on, 'stead of mister; and Jim's eyes bugged out, and he was interested.
 `
+
 const raceService = interpret(raceMachine)
 raceService.start()
 
 const Race = () => {
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const [ text, setText ] = useState<string>('')
-  const [ pos, setPos ] = useState<number>(0)
-  const [ val, setVal ] = useState<string>('')
-  const [ isValid, setValid ] = useState<boolean>(true)
-  const [ isFinished, setFinished ] = useState<boolean>(false)
-  const [ wrongText, setWrongText ] = useState<string>('')
-  const [ state, setState ] = useState<string>('')
   const [ isFocused, setFocused ] = useState<boolean>(false)
 
+  const [ raceInfo ] = useRaceService(raceService)
   useEffect(() => {
-    const sub = raceService.subscribe(state => {
-      setText(state.context.text)
-      setPos(state.context.pos)
-      setValid(!state.matches('race.invalid'))
-      setFinished(state.matches('finished'))
-      setWrongText(state.context.curWrongText)
-      setState(state.toStrings().join(' '))
-
-      console.log(state)
-    })
-
     raceService.send({ type: 'INIT', text: initialText })
-    return () => sub.unsubscribe()
   }, [])
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (!e.isTrusted) {
       e.preventDefault()
       return
     }
-    setVal('')
+    inputRef.current.value = ''
     const { key } = e
 
     if (e.ctrlKey && e.keyCode === 65) {  // ctrl + a
@@ -80,20 +62,21 @@ const Race = () => {
     if (key.length !== 1) {
       return
     }
-    raceService.send({ type: 'KEY_DOWN', key })
-  }
+    setTimeout(() => {
+      raceService.send({ type: 'KEY_DOWN', key })
+    }, 0)
+  }, [ inputRef.current ])
 
-  const onInputClick = () => inputRef.current && inputRef.current.focus()
+  const onInputClick = useCallback(() => inputRef.current && inputRef.current.focus(), [ inputRef.current ])
 
   return (
-    <div className={styles.race} data-state={state} data-focused={isFocused}>
+    <div className={styles.race} data-state={raceInfo.state} data-focused={isFocused}>
       <Book />
-      <RaceText text={text} pos={pos} hideCursor={true} />
-      <RaceInput text={text} pos={pos} wrongText={wrongText} onClick={() => onInputClick()} />
+      <RaceText text={raceInfo.text} pos={raceInfo.pos} hideCursor={true} />
+      <RaceInput text={raceInfo.text} pos={raceInfo.pos} wrongText={raceInfo.wrongText} onClick={() => onInputClick()} />
 
       <input type="text"
         ref={inputRef}
-        value={val}
         autoFocus
         onKeyDown={handleKeyDown}
         onChange={() => false}

@@ -2,6 +2,8 @@ import {
   createMachine,
   assign,
   MachineConfig,
+  State,
+  Interpreter,
 } from 'xstate'
 
 
@@ -35,6 +37,8 @@ type TRaceEvent =
   | { type: 'SELECT_ALL' }
 
 type TRaceMachineConfig = MachineConfig<TRaceContext, TRaceStateSchema, TRaceEvent>
+export type TRaceState = State<TRaceStateSchema, TRaceEvent>
+export type TRaceService = Interpreter<TRaceContext, TRaceStateSchema, TRaceEvent>
 
 const machineConfig: TRaceMachineConfig = {
   initial: 'init',
@@ -108,6 +112,11 @@ const machineConfig: TRaceMachineConfig = {
             ],
             DELETE_WORD: [
               {
+                cond: 'wrongTextHasSpacesInMiddle',
+                actions: 'deleteLastWordFromWrongText',
+                target: 'validate',
+              },
+              {
                 actions: 'deleteCurrentWordAndClearWrongText',
                 target: 'validate',
               }
@@ -178,6 +187,7 @@ const machine = createMachine(machineConfig, {
     },
     isFinished: ({ text, pos }) => text?.length === pos,
     isValid: ({ curWrongText }) => curWrongText === '',
+    wrongTextHasSpacesInMiddle: ({ curWrongText }) =>  / [^ ]/.test(curWrongText),
   },
   actions: {
     incPos: assign({ pos: ({ pos }) => pos + 1 }),
@@ -231,6 +241,12 @@ const machine = createMachine(machineConfig, {
             ? pos
             : text.slice(0, pos).lastIndexOf(' ') + 1,
       }),
+    deleteLastWordFromWrongText:
+      assign({
+        curWrongText: ({ curWrongText }) =>
+          curWrongText.slice(
+            0, Math.max(curWrongText.replace(/[ ]+$/, '').lastIndexOf(' '), 0))
+      })
   }
 })
 export default machine
