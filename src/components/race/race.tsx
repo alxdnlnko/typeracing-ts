@@ -1,4 +1,4 @@
-import React, { useEffect, useState, KeyboardEvent } from 'react'
+import React, { useEffect, useState, KeyboardEvent, useRef } from 'react'
 import { interpret } from 'xstate'
 
 import styles from './styles.module.scss'
@@ -29,6 +29,8 @@ const raceService = interpret(raceMachine)
 raceService.start()
 
 const Race = () => {
+  const inputRef = useRef<HTMLInputElement>(null)
+
   const [ text, setText ] = useState<string>('')
   const [ pos, setPos ] = useState<number>(0)
   const [ val, setVal ] = useState<string>('')
@@ -81,13 +83,16 @@ const Race = () => {
     raceService.send({ type: 'KEY_DOWN', key })
   }
 
+  const onInputClick = () => inputRef.current && inputRef.current.focus()
+
   return (
     <div className={styles.race} data-state={state} data-focused={isFocused}>
       <Book />
       <RaceText text={text} pos={pos} hideCursor={true} />
-      <RaceInput text={text} pos={pos} wrongText={wrongText} />
+      <RaceInput text={text} pos={pos} wrongText={wrongText} onClick={() => onInputClick()} />
 
       <input type="text"
+        ref={inputRef}
         value={val}
         autoFocus
         onKeyDown={handleKeyDown}

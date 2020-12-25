@@ -84,9 +84,11 @@
 
   .race[data-state~="race"] & {
     &[data-letterstate="prev"] {
-      opacity: .5;
+      opacity: .3;
       // transform: scale(.85);
     }
+
+    // caret
     &[data-letterstate="current"] {
       &::before {
         content: "";
@@ -94,7 +96,6 @@
         position: absolute;
         left: -1px;
         bottom: 2px;
-        // width: 2px;
         right: 0;
         height: 1.4em;
         background: var(--cursor-bg);
@@ -113,7 +114,8 @@
 
   .race[data-state~="race.valid"] & {
     &[data-letterstate="current"] {
-      --cursor-bg: #ffbc11;
+      // --cursor-bg: #ffbc11;
+      --cursor-bg: transparent;
     }
   }
   .race[data-state~="race.invalid"] & {
@@ -143,7 +145,13 @@
   height: 2.5em;
   color: var(--text-color);
   white-space: pre;
+  cursor: text;
 
+  &:hover {
+    --border-color: var(--color-text-secondary);
+  }
+
+  // border
   &::before {
     content: "";
     position: absolute;
@@ -199,7 +207,7 @@
   }
 }
 .inputCursor {
-  --cursor-color: var(--color-text-gray);
+  --cursor-color: rgba(255,255,255,.3);
 
   display: inline-block;
 

@@ -1,10 +1,10 @@
-import React, { useLayoutEffect, useRef } from 'react'
+import React, { useLayoutEffect, useRef, UIEventHandler } from 'react'
 
 import styles from './styles.module.scss'
 
 
-type TProps = { text: string, pos: number, wrongText: string }
-const RaceInput = ({ text, pos, wrongText }: TProps) => {
+type TProps = { text: string, pos: number, wrongText: string, onClick: UIEventHandler }
+const RaceInput = ({ text, pos, wrongText, onClick }: TProps) => {
   const cursorRef = useRef<HTMLSpanElement>(null)
   useLayoutEffect(() => {
     const el = cursorRef.current
@@ -27,7 +27,7 @@ const RaceInput = ({ text, pos, wrongText }: TProps) => {
     : text.slice(startInd, pos)
 
   return (
-    <div className={styles.input}>
+    <div className={styles.input} onClick={e => onClick && onClick(e)}>
       <span className={styles.inputWrapper}>
         <span className={styles.inputCurrentWord}>{curWord}</span>
         <span className={styles.inputWrongText}>{wrongText}</span>
