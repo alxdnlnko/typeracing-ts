@@ -206,69 +206,60 @@ const machine = createMachine(machineConfig, {
         ? wrongText + e.key
         : wrongText
     }),
-    deleteOneCharOfCurrentWord:
-      assign({
-        pos: ({ text, pos }) =>
-          pos === 0 || text[pos - 1] === ' '
-            ? pos
-            : pos - 1
-      }),
-    deleteCurrentWord:
-      assign({
-        pos: ({ text, pos }) =>
-          pos === 0 || text[pos - 1] === ' '  // prevent deleting prev word
-            ? pos
-            : text.slice(0, pos).lastIndexOf(' ') + 1
-      }),
-    deleteCurrentWordAndClearWrongText:
-      assign({
-        wrongText: (_) => '',
-        pos: ({ text, pos }) =>
-          pos === 0 || text[pos-1] === ' '
-            ? pos
-            : text.slice(0, pos).lastIndexOf(' ') + 1,
-      }),
-    deleteOneWrongChar:
-      assign({
-        wrongText: ({ wrongText }) => wrongText.slice(0, -1),
-      }),
-    deleteCurrentWordAndWrongTextAndIncPos:
-      assign({
-        wrongText: (_) => '',
-        pos: ({ text, pos }) =>
-          pos === 0 || text[pos-1] === ' '
-            ? pos + 1
-            : text.slice(0, pos).lastIndexOf(' ') + 2
-      }),
-    deleteCurrentWordAndWrongTextAndAddKeyToWrongText:
-      assign({
-        wrongText: ({ wrongText }, e) =>
-          e.type === 'KEY_DOWN'
-            ? wrongText + e.key
-            : wrongText,
-        pos: ({ text, pos }) =>
-          pos === 0 || text[pos-1] === ' '
-            ? pos
-            : text.slice(0, pos).lastIndexOf(' ') + 1,
-      }),
-    deleteLastWordFromWrongText:
-      assign({
-        wrongText: ({ wrongText }) =>
-          wrongText.slice(
-            0, Math.max(wrongText.replace(/[ ]+$/, '').lastIndexOf(' '), 0))
-      }),
-    setRaceStartTime:
-      assign({
-        raceStartTime: (_) => +new Date(),
-      }),
-    updateSpeed:
-      assign({
-        speed: ({ pos, raceStartTime, speed }, e) => {
-          if (e.type !== 'KEY_DOWN') return speed
-          const minutes = (+new Date() - raceStartTime) / (1000 * 60)
-          return pos / minutes
-        },
-      }),
+    deleteOneCharOfCurrentWord: assign({
+      pos: ({ text, pos }) =>
+        pos === 0 || text[pos - 1] === ' '
+          ? pos
+          : pos - 1
+    }),
+    deleteCurrentWord: assign({
+      pos: ({ text, pos }) =>
+        pos === 0 || text[pos - 1] === ' '  // prevent deleting prev word
+          ? pos
+          : text.slice(0, pos).lastIndexOf(' ') + 1
+    }),
+    deleteCurrentWordAndClearWrongText: assign({
+      wrongText: (_) => '',
+      pos: ({ text, pos }) =>
+        pos === 0 || text[pos-1] === ' '
+          ? pos
+          : text.slice(0, pos).lastIndexOf(' ') + 1,
+    }),
+    deleteOneWrongChar: assign({
+      wrongText: ({ wrongText }) => wrongText.slice(0, -1),
+    }),
+    deleteCurrentWordAndWrongTextAndIncPos: assign({
+      wrongText: (_) => '',
+      pos: ({ text, pos }) =>
+        pos === 0 || text[pos-1] === ' '
+          ? pos + 1
+          : text.slice(0, pos).lastIndexOf(' ') + 2
+    }),
+    deleteCurrentWordAndWrongTextAndAddKeyToWrongText: assign({
+      wrongText: ({ wrongText }, e) =>
+        e.type === 'KEY_DOWN'
+          ? wrongText + e.key
+          : wrongText,
+      pos: ({ text, pos }) =>
+        pos === 0 || text[pos-1] === ' '
+          ? pos
+          : text.slice(0, pos).lastIndexOf(' ') + 1,
+    }),
+    deleteLastWordFromWrongText: assign({
+      wrongText: ({ wrongText }) =>
+        wrongText.slice(
+          0, Math.max(wrongText.replace(/[ ]+$/, '').lastIndexOf(' '), 0))
+    }),
+    setRaceStartTime: assign({
+      raceStartTime: (_) => +new Date(),
+    }),
+    updateSpeed: assign({
+      speed: ({ pos, raceStartTime, speed }, e) => {
+        if (e.type !== 'KEY_DOWN') return speed
+        const minutes = (+new Date() - raceStartTime) / (1000 * 60)
+        return pos / minutes
+      },
+    }),
   }
 })
 export default machine
