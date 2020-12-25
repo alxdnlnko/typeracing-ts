@@ -75,6 +75,7 @@
   display: inline-block;
   white-space: pre;
 
+  transform-origin: center;
   transition:
     opacity .03s ease-out,
     transform .03s ease-out;
@@ -84,20 +85,23 @@
   .race[data-state~="race"] & {
     &[data-letterstate="prev"] {
       opacity: .5;
-      transform: scale(.85);
+      // transform: scale(.85);
     }
     &[data-letterstate="current"] {
       &::before {
         content: "";
         display: block;
         position: absolute;
-        left: -2px;
+        left: -1px;
         bottom: 2px;
-        width: 2px;
+        // width: 2px;
+        right: 0;
         height: 1.4em;
         background: var(--cursor-bg);
+        z-index: -1;
+        opacity: .2;
 
-        animation: cursor-move .11s ease-out;
+        animation: cursor-move .05s ease-out;
         animation-fill-mode: backwards;
         transform-origin: center bottom;
         @keyframes cursor-move {
@@ -152,7 +156,7 @@
     border-radius: .2em;
   }
 
-  .race[data-focused="true"] & {
+  .race[data-state~='race'][data-focused="true"] & {
     --text-color: var(--color-text-primary);
     --border-color: var(--color-text-primary);
   }
@@ -211,7 +215,7 @@
 
   }
 
-  .race[data-focused="true"] & {
+  .race[data-state~="race"][data-focused="true"] & {
     --cursor-color: var(--color-text-primary);
 
     animation: pulse-cursor 1s infinite;

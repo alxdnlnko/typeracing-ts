@@ -84,7 +84,7 @@ const Race = () => {
   return (
     <div className={styles.race} data-state={state} data-focused={isFocused}>
       <Book />
-      <RaceText text={text} pos={pos} />
+      <RaceText text={text} pos={pos} hideCursor={true} />
       <RaceInput text={text} pos={pos} wrongText={wrongText} />
 
       <input type="text"

@@ -5,8 +5,8 @@ import styles from './styles.module.scss'
 import RaceWord from './race-word'
 
 
-type TProps = { text: string, pos: number }
-const RaceText = ({ text, pos }: TProps) => {
+type TProps = { text: string, pos: number, hideCursor?: boolean }
+const RaceText = ({ text, pos, hideCursor }: TProps) => {
   const wordsInfo = text
     .split(' ')
     .map(w => `${w} `)
@@ -22,7 +22,7 @@ const RaceText = ({ text, pos }: TProps) => {
   }
 
   return (
-    <div className={styles.text}>
+    <div className={styles.text} data-hidecursor={hideCursor}>
       { wordsInfo.map(
         (w, i) =>
           <RaceWord
