@@ -73,63 +73,48 @@ const machineConfig: TRaceMachineConfig = {
         valid: {
           on: {
             DELETE_CHAR: {
-              actions: assign({
-                pos: ({ text, pos }) =>
-                  pos === 0 || text[pos - 1] === ' '
-                    ? pos
-                    : pos - 1
-              }),
+              actions: 'deleteOneCharOfCurrentWord',
               target: 'validate',
             },
             DELETE_WORD: {
-              actions: assign({
-                pos: ({ text, pos }) =>
-                  pos === 0 || text[pos - 1] === ' '  // prevent deleting prev word
-                    ? pos
-                    : text.slice(0, pos).lastIndexOf(' ') + 1
-              }),
+              actions: 'deleteCurrentWord',
               target: 'validate',
             },
             KEY_DOWN: [
               {
-                cond: ({ text, pos }, e) => e.key === text[pos],
-                actions: assign({ pos: ctx => ctx.pos + 1 }),
+                cond: 'keyMatchesCurrentPos',
+                actions: 'incPos',
                 target: 'validate',
               },
               {
-                actions: assign({ curWrongText: (ctx, e) => ctx.curWrongText + e.key }),
+                actions: 'addKeyToWrongText',
                 target: 'validate',
               },
             ],
-            SELECT_ALL: 'selected',
+            SELECT_ALL: [
+              {
+                cond: 'hasAnyText',
+                target: 'selected',
+              }
+            ]
           }
         },
         invalid: {
           on: {
             KEY_DOWN: [
               {
-                actions: assign({
-                  curWrongText: ({ curWrongText }, { key }) => curWrongText + key
-                })
+                actions: 'addKeyToWrongText',
               }
             ],
             DELETE_WORD: [
               {
-                actions: assign({
-                  curWrongText: (_) => '',
-                  pos: ({ text, pos }) =>
-                    pos === 0 || text[pos-1] === ' '
-                      ? pos
-                      : text.slice(0, pos).lastIndexOf(' ') + 1,
-                }),
+                actions: 'deleteCurrentWordAndClearWrongText',
                 target: 'validate',
               }
             ],
             DELETE_CHAR: [
               {
-                actions: assign({
-                  curWrongText: ({ curWrongText }) => curWrongText.slice(0, -1),
-                }),
+                actions: 'deleteOneWrongChar',
                 target: 'validate',
               }
             ],
@@ -139,54 +124,25 @@ const machineConfig: TRaceMachineConfig = {
         selected: {
           on: {
             KEY_DOWN: [
-              {  // key matches the beginning of current word
-                cond: ({ text, pos }, { key }) => {
-                  const wordPos = pos === 0 || text[pos-1] === ' '
-                    ? pos
-                    : text.slice(0, pos).lastIndexOf(' ') + 1
-                  return text[wordPos] === key
-                },
-                actions: assign({
-                  curWrongText: (_) => '',
-                  pos: ({ text, pos }) =>
-                    pos === 0 || text[pos-1] === ' '
-                      ? pos + 1
-                      : text.slice(0, pos).lastIndexOf(' ') + 2
-                }),
+              {
+                cond: 'keyMatchesStartOfCurrentWord',
+                actions: 'deleteCurrentWordAndWrongTextAndIncPos',
                 target: 'validate',
               },
               {
-                actions: assign({
-                  curWrongText: (ctx, e) => ctx.curWrongText + e.key,
-                  pos: ({ text, pos }) =>
-                    pos === 0 || text[pos-1] === ' '
-                      ? pos
-                      : text.slice(0, pos).lastIndexOf(' ') + 1,
-                }),
+                actions: 'deleteCurrentWordAndWrongTextAndAddKeyToWrongText',
                 target: 'validate',
               },
             ],
             DELETE_CHAR: [
               {
-                actions: assign({
-                  curWrongText: (_) => '',
-                  pos: ({ text, pos }) =>
-                    pos === 0 || text[pos-1] === ' '
-                      ? pos
-                      : text.slice(0, pos).lastIndexOf(' ') + 1,
-                }),
+                actions: 'deleteCurrentWordAndClearWrongText',
                 target: 'validate',
               }
             ],
             DELETE_WORD: [
               {
-                actions: assign({
-                  curWrongText: (_) => '',
-                  pos: ({ text, pos }) =>
-                    pos === 0 || text[pos-1] === ' '
-                      ? pos
-                      : text.slice(0, pos).lastIndexOf(' ') + 1,
-                }),
+                actions: 'deleteCurrentWordAndClearWrongText',
                 target: 'validate',
               }
             ]
@@ -195,8 +151,8 @@ const machineConfig: TRaceMachineConfig = {
         validate: {
           on: {
             '': [
-              { cond: ({ text, pos }) => text?.length === pos, target: '#root.finished' },
-              { cond: ({ curWrongText }) => curWrongText === '', target: 'valid' },
+              { cond: 'isFinished', target: '#root.finished' },
+              { cond: 'isValid', target: 'valid' },
               { target: 'invalid' },
             ]
           }
@@ -207,5 +163,74 @@ const machineConfig: TRaceMachineConfig = {
     }
   }
 }
-const machine = createMachine(machineConfig)
+const machine = createMachine(machineConfig, {
+  guards: {
+    keyMatchesCurrentPos: ({ text, pos }, e) =>
+      e.type === 'KEY_DOWN' && e.key === text[pos],
+    hasAnyText: ({ text, pos, curWrongText }) =>
+      pos > 0 && text[pos-1] !== ' ' || curWrongText.length > 0,
+    keyMatchesStartOfCurrentWord: ({ text, pos }, e) => {
+      if (e.type !== 'KEY_DOWN') return false
+      const wordPos = pos === 0 || text[pos-1] === ' '
+        ? pos
+        : text.slice(0, pos).lastIndexOf(' ') + 1
+      return text[wordPos] === e.key
+    },
+    isFinished: ({ text, pos }) => text?.length === pos,
+    isValid: ({ curWrongText }) => curWrongText === '',
+  },
+  actions: {
+    incPos: assign({ pos: ({ pos }) => pos + 1 }),
+    addKeyToWrongText: assign({
+      curWrongText: ({ curWrongText }, e) => e.type === 'KEY_DOWN'
+        ? curWrongText + e.key
+        : curWrongText
+    }),
+    deleteOneCharOfCurrentWord:
+      assign({
+        pos: ({ text, pos }) =>
+          pos === 0 || text[pos - 1] === ' '
+            ? pos
+            : pos - 1
+      }),
+    deleteCurrentWord:
+      assign({
+        pos: ({ text, pos }) =>
+          pos === 0 || text[pos - 1] === ' '  // prevent deleting prev word
+            ? pos
+            : text.slice(0, pos).lastIndexOf(' ') + 1
+      }),
+    deleteCurrentWordAndClearWrongText:
+      assign({
+        curWrongText: (_) => '',
+        pos: ({ text, pos }) =>
+          pos === 0 || text[pos-1] === ' '
+            ? pos
+            : text.slice(0, pos).lastIndexOf(' ') + 1,
+      }),
+    deleteOneWrongChar:
+      assign({
+        curWrongText: ({ curWrongText }) => curWrongText.slice(0, -1),
+      }),
+    deleteCurrentWordAndWrongTextAndIncPos:
+      assign({
+        curWrongText: (_) => '',
+        pos: ({ text, pos }) =>
+          pos === 0 || text[pos-1] === ' '
+            ? pos + 1
+            : text.slice(0, pos).lastIndexOf(' ') + 2
+      }),
+    deleteCurrentWordAndWrongTextAndAddKeyToWrongText:
+      assign({
+        curWrongText: ({ curWrongText }, e) =>
+          e.type === 'KEY_DOWN'
+            ? curWrongText + e.key
+            : curWrongText,
+        pos: ({ text, pos }) =>
+          pos === 0 || text[pos-1] === ' '
+            ? pos
+            : text.slice(0, pos).lastIndexOf(' ') + 1,
+      }),
+  }
+})
 export default machine
