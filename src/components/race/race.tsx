@@ -1,5 +1,6 @@
 import React, { useEffect, useState, KeyboardEvent, useRef, useCallback } from 'react'
 import { interpret } from 'xstate'
+import { Decimal } from 'decimal.js'
 
 import styles from './styles.module.scss'
 import BookIcon from './icons/book.svg'
@@ -9,6 +10,7 @@ import { useRaceService } from './hooks'
 
 import RaceText from './race-text'
 import RaceInput from './race-input'
+import RacersList from '/components/racers-list'
 
 
 const Book = () => {
@@ -25,6 +27,12 @@ const initialText = `
   И как раз об этом лучше не забывать. Историю не стереть и не переделать.
   Это всё равно что уничтожить самого себя.
 `
+
+const racer = {
+  name: 'alxdnlnko',
+  progressPerc: 0,
+  finished: false
+}
 
 const raceService = interpret(raceMachine)
 raceService.start()
@@ -83,6 +91,8 @@ const Race = () => {
       ? `Старт через ${raceInfo.countdown} с.`
     : ''
 
+  const perc = Decimal.div(raceInfo.pos, Decimal.div(raceInfo.text.length, 100)).toNumber()
+
   return (
     <div className={styles.race} data-state={raceInfo.state.join(' ')} data-focused={isFocused}>
       <Book />
@@ -108,6 +118,8 @@ const Race = () => {
           opacity: '0'
         }}
       />
+
+      <RacersList racers={[ { ...racer, progressPerc: perc }, ]} />
     </div>
   )
 }

@@ -36,7 +36,7 @@ export const useRaceService = (raceService: TRaceService) => {
         countdown,
       })
       // console.log(state)
-      console.log(state.toStrings().join(' '), countdown)
+      // console.log(state.toStrings().join(' '), countdown)
     })
     return () => sub.unsubscribe()
   }, [])
