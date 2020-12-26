@@ -180,6 +180,7 @@
   .race[data-state~="race"][data-focused="false"] &:hover {
     opacity: .8;
   }
+  .race[data-state~="waiting"][data-focused="true"] &,
   .race[data-state~="countdown"][data-focused="true"] &,
   .race[data-state~="race"][data-focused="true"] & {
     opacity: 1;

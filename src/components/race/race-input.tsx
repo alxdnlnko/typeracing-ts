@@ -27,10 +27,10 @@ interface TProps {
   text: string
   pos: number
   wrongText: string
-  onClick: UIEventHandler
   speed: string
   errorsCount: number
   status: string
+  onClick: UIEventHandler
 }
 const RaceInput = ({ text, pos, wrongText, onClick, speed, errorsCount, status }: TProps) => {
   const cursorRef = useRef<HTMLSpanElement>(null)

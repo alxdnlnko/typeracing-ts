@@ -51,6 +51,11 @@ const Race = () => {
       e.preventDefault()
       return
     }
+    if (key === 'Enter') {
+      raceService.send({ type: 'START' })
+      e.preventDefault()
+      return
+    }
     if (key === 'Backspace') {
       if (e.ctrlKey) raceService.send({ type: 'DELETE_WORD' })
       else raceService.send({ type: 'DELETE_CHAR' })
@@ -70,7 +75,9 @@ const Race = () => {
   const onInputClick = useCallback(() => inputRef.current && inputRef.current.focus(), [ inputRef.current ])
 
   const statusText =
-    raceInfo.state.includes('countdown.waiting')
+    raceInfo.state.includes('waiting')
+      ? `Ожидание игроков. Нажмите Enter, чтобы начать`
+    : raceInfo.state.includes('countdown.waiting')
       ? `Старт через ${raceInfo.countdown} с.`
     : raceInfo.state.includes('countdown.ready')
       ? `Старт через ${raceInfo.countdown} с.`

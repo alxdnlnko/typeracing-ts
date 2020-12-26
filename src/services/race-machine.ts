@@ -25,6 +25,7 @@ interface TRaceContext {
 interface TRaceStateSchema {
   states: {
     init: {}
+    waiting: {}
     countdown: {
       states: {
         waiting: {}
@@ -45,6 +46,7 @@ interface TRaceStateSchema {
 
 type TRaceEvent =
   | { type: 'INIT', text: string, countdown?: number }
+  | { type: 'START' }
   | { type: 'KEY_DOWN', key: string }
   | { type: 'DELETE_CHAR' }
   | { type: 'DELETE_WORD' }
@@ -72,7 +74,7 @@ const machineConfig: TRaceMachineConfig = {
     init: {
       on: {
         INIT: {
-          target: 'countdown',
+          target: 'waiting',
           actions: assign({
             text: (_, { text }) =>
               text
@@ -89,6 +91,14 @@ const machineConfig: TRaceMachineConfig = {
             countdown: (_, { countdown }) => countdown || 10,
           }),
         }
+      }
+    },
+    waiting: {
+      on: {
+        START: 'countdown',
+      },
+      after: {
+        15000: 'countdown',
       }
     },
     countdown: {
