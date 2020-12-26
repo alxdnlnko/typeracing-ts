@@ -81,7 +81,7 @@ const machineConfig: TRaceMachineConfig = {
     },
     countdown: {
       after: {
-        5000: 'race'
+        3000: 'race'
       }
     },
     race: {
@@ -101,7 +101,7 @@ const machineConfig: TRaceMachineConfig = {
             KEY_DOWN: [
               {
                 cond: 'keyMatchesCurrentPos',
-                actions: [ 'incPos', 'updateSpeed' ],
+                actions: [ 'incPos', 'updateSpeed', 'resetErrorPos' ],
                 target: 'validate',
               },
               {
@@ -270,6 +270,9 @@ const machine = createMachine(machineConfig, {
     updateErrors: assign({
       lastErrorPos: ({ pos }) => pos,
       errorsCount: ({ lastErrorPos, errorsCount, pos }) => pos !== lastErrorPos ? errorsCount + 1 : errorsCount,
+    }),
+    resetErrorPos: assign({
+      lastErrorPos: (_) => -1,
     }),
   }
 })
