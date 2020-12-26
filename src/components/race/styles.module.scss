@@ -135,18 +135,6 @@
   }
   .race[data-state~="race.invalid"] & {
     &[data-letterstate="current"] {
-      --cursor-bg: #672424;
-
-      &::before {
-        animation: highlight-error-letter .14s ease-out;
-        animation-fill-mode: backwards;
-        @keyframes highlight-error-letter {
-          from {
-            color: var(--color-red);
-            transform: scale(1.3);
-          }
-        }
-      }
     }
   }
 }
@@ -168,6 +156,7 @@
   cursor: text;
   font-size: 1.6em;
 
+
   // border
   &::before {
     content: "";
@@ -179,6 +168,8 @@
     display: block;
     border: 2px solid var(--border-color);
     border-radius: .2em;
+
+    transition: border-color .1s ease-out;
   }
 
   .race[data-state~="race"][data-focused="false"] &:hover {
@@ -188,6 +179,9 @@
   .race[data-state~="countdown"][data-focused="true"] &,
   .race[data-state~="race"][data-focused="true"] & {
     --border-color: var(--color-text-primary);
+  }
+  .race[data-state~="race.invalid"].race[data-state~="race.invalid"] & {
+    --border-color: var(--color-red);
   }
 }
 .inputWrapper {
