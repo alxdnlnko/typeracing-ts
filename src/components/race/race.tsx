@@ -35,7 +35,7 @@ const Race = () => {
 
   const [ raceInfo ] = useRaceService(raceService)
   useEffect(() => {
-    raceService.send({ type: 'INIT', text: initialText })
+    raceService.send({ type: 'INIT', text: initialText, countdown: 5 })
   }, [])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -69,8 +69,15 @@ const Race = () => {
 
   const onInputClick = useCallback(() => inputRef.current && inputRef.current.focus(), [ inputRef.current ])
 
+  const statusText =
+    raceInfo.state.includes('countdown.waiting')
+      ? `Старт через ${raceInfo.countdown} с.`
+    : raceInfo.state.includes('countdown.ready')
+      ? `Старт через ${raceInfo.countdown} с.`
+    : ''
+
   return (
-    <div className={styles.race} data-state={raceInfo.state} data-focused={isFocused}>
+    <div className={styles.race} data-state={raceInfo.state.join(' ')} data-focused={isFocused}>
       <Book />
       <RaceText text={raceInfo.text} pos={raceInfo.pos} hideCursor={true} />
       <RaceInput
@@ -79,6 +86,7 @@ const Race = () => {
         wrongText={raceInfo.wrongText}
         speed={raceInfo.speed}
         errorsCount={raceInfo.errorsCount}
+        status={statusText}
         onClick={() => onInputClick()}
       />
 

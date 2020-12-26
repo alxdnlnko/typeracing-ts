@@ -8,6 +8,9 @@ import {
 import { Decimal } from 'decimal.js'
 
 
+const COUNTDOWN_READY_THRES: number = 2
+
+
 interface TRaceContext {
   text: string|null
   pos: number
@@ -16,12 +19,18 @@ interface TRaceContext {
   speed: string
   errorsCount: number
   lastErrorPos: number
+  countdown: number
 }
 
 interface TRaceStateSchema {
   states: {
     init: {}
-    countdown: {}
+    countdown: {
+      states: {
+        waiting: {}
+        ready: {}
+      }
+    }
     race: {
       states: {
         valid: {}
@@ -35,11 +44,12 @@ interface TRaceStateSchema {
 }
 
 type TRaceEvent =
-  | { type: 'INIT', text: string }
+  | { type: 'INIT', text: string, countdown?: number }
   | { type: 'KEY_DOWN', key: string }
   | { type: 'DELETE_CHAR' }
   | { type: 'DELETE_WORD' }
   | { type: 'SELECT_ALL' }
+  | { type: 'TIMER' }
 
 type TRaceMachineConfig = MachineConfig<TRaceContext, TRaceStateSchema, TRaceEvent>
 export type TRaceState = State<TRaceStateSchema, TRaceEvent>
@@ -56,6 +66,7 @@ const machineConfig: TRaceMachineConfig = {
     speed: '',
     errorsCount: 0,
     lastErrorPos: -1,
+    countdown: 10,
   },
   states: {
     init: {
@@ -75,13 +86,48 @@ const machineConfig: TRaceMachineConfig = {
             speed: (_) => '',
             errorsCount: (_) => 0,
             lastErrorPos: (_) => -1,
+            countdown: (_, { countdown }) => countdown || 10,
           }),
         }
       }
     },
     countdown: {
-      after: {
-        3000: 'race'
+      initial: 'waiting',
+      states: {
+        waiting: {
+          on: {
+            TIMER: [
+              {
+                cond: 'isCountdownReady',
+                actions: 'decCountdown',
+                target: 'ready',
+              },
+              {
+                actions: 'decCountdown',
+              },
+            ]
+          }
+        },
+        ready: {
+          on: {
+            TIMER: [
+              {
+                cond: 'isCountdownOver',
+                target: '#root.race',
+              },
+              {
+                actions: 'decCountdown',
+              }
+            ]
+          }
+        },
+      },
+      invoke: {
+        id: 'timer',
+        src: () => (cb) => {
+          const id = setInterval(() => cb({ type: 'TIMER' }), 1000)
+          return () => clearInterval(id)
+        },
       }
     },
     race: {
@@ -203,6 +249,8 @@ const machine = createMachine(machineConfig, {
     isFinished: ({ text, pos }) => text?.length === pos,
     isValid: ({ wrongText }) => wrongText === '',
     wrongTextHasSpacesInMiddle: ({ wrongText }) =>  / [^ ]/.test(wrongText),
+    isCountdownReady: ({ countdown }) => countdown <= COUNTDOWN_READY_THRES + 1,
+    isCountdownOver: ({ countdown }) => countdown <= 0 + 1,
   },
   actions: {
     incPos: assign({ pos: ({ pos }) => pos + 1 }),
@@ -273,6 +321,9 @@ const machine = createMachine(machineConfig, {
     }),
     resetErrorPos: assign({
       lastErrorPos: (_) => -1,
+    }),
+    decCountdown: assign({
+      countdown: ({ countdown }) => countdown - 1,
     }),
   }
 })

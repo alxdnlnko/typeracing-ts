@@ -3,6 +3,16 @@ import React, { useLayoutEffect, useRef, UIEventHandler } from 'react'
 import styles from './styles.module.scss'
 
 
+type TStatusProps = { text: string }
+const Status = ({ text }: TStatusProps) => {
+  return (
+    <div className={styles.status}>
+      <span>{text}</span>
+    </div>
+  )
+}
+
+
 type TStatsProps = { speed: string, errorsCount: number }
 const Stats = ({ speed, errorsCount }: TStatsProps) => {
   return (
@@ -20,8 +30,9 @@ interface TProps {
   onClick: UIEventHandler
   speed: string
   errorsCount: number
+  status: string
 }
-const RaceInput = ({ text, pos, wrongText, onClick, speed, errorsCount }: TProps) => {
+const RaceInput = ({ text, pos, wrongText, onClick, speed, errorsCount, status }: TProps) => {
   const cursorRef = useRef<HTMLSpanElement>(null)
   useLayoutEffect(() => {
     const el = cursorRef.current
@@ -50,6 +61,7 @@ const RaceInput = ({ text, pos, wrongText, onClick, speed, errorsCount }: TProps
         <span className={styles.inputWrongText}>{wrongText}</span>
         <span ref={cursorRef} className={styles.inputCursor}></span>
       </span>
+      <Status text={status} />
       <Stats speed={speed} errorsCount={errorsCount} />
     </div>
   )

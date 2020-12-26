@@ -44,7 +44,7 @@
   line-height: 1.6em;
   letter-spacing: 1px;
 
-  .race[data-state~="countdown"] & {
+  .race[data-state~="countdown.waiting"] & {
     filter: blur(.25em);
   }
 }
@@ -184,6 +184,13 @@
   .race[data-state~="race"][data-focused="true"] & {
     opacity: 1;
   }
+  .race[data-state~="race"] & {
+    animation: start-race .2s ease-out;
+    animation-fill-mode: backwards;
+    @keyframes start-race {
+      from { background: white; }
+    }
+  }
 }
 .inputWrapper {
   padding: 0 .5em;
@@ -268,8 +275,8 @@
   bottom: -1.2em;
 
   > span {
-    display: inline-block;
     margin-left: .6em;
+    display: inline-block;
     border-radius: .2em;
     font-size: .6em;
     line-height: .6em;
@@ -279,5 +286,21 @@
 
   .race[data-state~="race.finished"] & {
     --stats-color: var(--color-text-primary);
+  }
+}
+
+.status {
+  --status-color: var(--color-text-gray);
+  position: absolute;
+  left: 0;
+  bottom: -1.2em;
+
+  > span {
+    margin-right: .6em;
+    display: inline-block;
+    border-radius: .2em;
+    font-size: .6em;
+    line-height: .6em;
+    color: var(--status-color);
   }
 }
