@@ -10,7 +10,6 @@ const RaceText = ({ text, pos, hideCursor }: TProps) => {
   const wordsInfo = useMemo(() => {
     const wordsInfo = text
       .split(' ')
-      .map(w => `${w} `)
       .map(w => ({ text: w, startPos: 0, endPos: 0, ind: 0 }))
 
     let prevWordsLen = 0
@@ -18,8 +17,8 @@ const RaceText = ({ text, pos, hideCursor }: TProps) => {
     for (let w of wordsInfo) {
       w.ind = ind++
       w.startPos = prevWordsLen
-      w.endPos = w.startPos + w.text.length - 1
-      prevWordsLen += w.text.length
+      w.endPos = w.startPos + w.text.length
+      prevWordsLen += w.text.length + 1
     }
 
     return wordsInfo

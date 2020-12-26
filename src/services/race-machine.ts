@@ -81,7 +81,7 @@ const machineConfig: TRaceMachineConfig = {
     },
     countdown: {
       after: {
-        1000: 'race'
+        5000: 'race'
       }
     },
     race: {

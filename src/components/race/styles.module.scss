@@ -43,12 +43,21 @@
   font-size: 1.3em;
   line-height: 1.6em;
   letter-spacing: 1px;
+
+  .race[data-state~="countdown"] & {
+    filter: blur(.25em);
+  }
 }
 
 .word {
+  margin-right: .4em;
+  display: inline-block;
   white-space: nowrap;
 
   .race[data-state~="race"] & {
+    &[data-wordstate="prev"] {
+      opacity: .3;
+    }
     &[data-wordstate="current"] {
       &::before {
         content: "";
@@ -56,7 +65,8 @@
         position: absolute;
         left: -.1em;
         bottom: -.1em;
-        right: .2em;
+        // right: .2em;
+        right: -.1em;
         top: -.1em;
         background: rgba(255,255,255,.05);
         border-radius: .2em;
@@ -141,15 +151,18 @@
   --border-color: var(--color-text-primary);
   --cursor-color: rgba(255,255,255,.3);
 
-  font-size: 1.6em;
-  padding: .5em;
+  padding: .5em 0;
   margin-top: 2.1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   width: 100%;
   height: 2.5em;
   color: var(--text-color);
   white-space: pre;
   cursor: text;
   opacity: .5;
+  font-size: 1.6em;
 
   // border
   &::before {
@@ -164,22 +177,28 @@
     border-radius: .2em;
   }
 
-  .race[data-state~='race'][data-focused="false"] &:hover {
+  .race[data-state~="race"][data-focused="false"] &:hover {
     opacity: .8;
   }
-  .race[data-state~='race'][data-focused="true"] & {
+  .race[data-state~="countdown"][data-focused="true"] &,
+  .race[data-state~="race"][data-focused="true"] & {
     opacity: 1;
   }
 }
 .inputWrapper {
-  display: inline-block;
+  padding: 0 .5em;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  max-width: 100%;
+  overflow: hidden;
 
   .race[data-state~="race.selected"] & {
     &::before {
       content: "";
       position: absolute;
-      left: -.1em;
-      right: -.1em;
+      left: .3em;
+      right: .3em;
       bottom: -.1em;
       top: -.1em;
       display: block;
@@ -211,15 +230,16 @@
 .inputCursor {
 
   display: inline-block;
+  height: 1.3em;
 
   &::before {
     content: "";
     position: absolute;
     left: 2px;
-    bottom: -.3em;
+    top: 1px;
+    bottom: -1px;
     display: block;
     width: 2px;
-    height: 1.3em;
     background: var(--cursor-color);
 
   }
@@ -234,7 +254,7 @@
       to { opacity: .3; }
     }
   }
-  .race[data-state~='race.selected'] & {
+  .race[data-state~="race.selected"] & {
     &::before {
       display: none;
     }
@@ -257,7 +277,7 @@
     // background: rgba(255,255,255,.03);
   }
 
-  .race[data-state~='race.finished'] & {
+  .race[data-state~="race.finished"] & {
     --stats-color: var(--color-text-primary);
   }
 }

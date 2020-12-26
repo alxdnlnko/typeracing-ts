@@ -27,16 +27,19 @@ const RaceWord = ({ word, pos }: TWordOpts) => {
       data-wordstate={wordState}
       style={{['--i' as any]: word.ind}}
     >
-      { letters.map(
-        (l, i) =>
-          <span
-            className={styles.letter}
-            key={i}
-            data-letterstate={l.state}
-          >
-            {l.char}
-          </span>
-      )}
+      { wordState === 'current'
+          ? letters.map(
+            (l, i) =>
+              <span
+                className={styles.letter}
+                key={i}
+                data-letterstate={l.state}
+              >
+                {l.char}
+              </span>
+            )
+          : word.text
+      }
     </span>
   )
 }
