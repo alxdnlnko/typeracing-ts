@@ -242,9 +242,22 @@
 }
 
 .stats {
+  --stats-color: var(--color-text-gray);
   position: absolute;
   right: 0;
-  bottom: -1.8em;
-  font-size: .6em;
-  color: var(--color-text-grey);
+  bottom: -1.2em;
+
+  > span {
+    display: inline-block;
+    margin-left: .6em;
+    border-radius: .2em;
+    font-size: .6em;
+    line-height: .6em;
+    color: var(--stats-color);
+    // background: rgba(255,255,255,.03);
+  }
+
+  .race[data-state~='race.finished'] & {
+    --stats-color: var(--color-text-primary);
+  }
 }

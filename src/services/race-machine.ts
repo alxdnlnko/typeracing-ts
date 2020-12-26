@@ -5,6 +5,7 @@ import {
   State,
   Interpreter,
 } from 'xstate'
+import { Decimal } from 'decimal.js'
 
 
 interface TRaceContext {
@@ -12,8 +13,9 @@ interface TRaceContext {
   pos: number
   wrongText: string
   raceStartTime: number
-  speed: number
+  speed: string
   errorsCount: number
+  lastErrorPos: number
 }
 
 interface TRaceStateSchema {
@@ -51,8 +53,9 @@ const machineConfig: TRaceMachineConfig = {
     pos: 0,
     wrongText: '',
     raceStartTime: -1,
-    speed: 0,
-    errorsCount: 0
+    speed: '',
+    errorsCount: 0,
+    lastErrorPos: -1,
   },
   states: {
     init: {
@@ -69,8 +72,9 @@ const machineConfig: TRaceMachineConfig = {
             pos: (_) => 0,
             wrongText: (_) => '',
             raceStartTime: (_) => -1,
-            speed: (_) => 0,
+            speed: (_) => '',
             errorsCount: (_) => 0,
+            lastErrorPos: (_) => -1,
           }),
         }
       }
@@ -114,6 +118,7 @@ const machineConfig: TRaceMachineConfig = {
           }
         },
         invalid: {
+          entry: 'updateErrors',
           on: {
             KEY_DOWN: [
               {
@@ -256,9 +261,15 @@ const machine = createMachine(machineConfig, {
     updateSpeed: assign({
       speed: ({ pos, raceStartTime, speed }, e) => {
         if (e.type !== 'KEY_DOWN') return speed
-        const minutes = (+new Date() - raceStartTime) / (1000 * 60)
-        return pos / minutes
+        const dPos = new Decimal(pos)
+        const dMinutes = new Decimal(+new Date() - raceStartTime).dividedBy(60000)
+        const res = dPos.dividedBy(dMinutes).toFixed(2)
+        return res
       },
+    }),
+    updateErrors: assign({
+      lastErrorPos: ({ pos }) => pos,
+      errorsCount: ({ lastErrorPos, errorsCount, pos }) => pos !== lastErrorPos ? errorsCount + 1 : errorsCount,
     }),
   }
 })

@@ -78,6 +78,7 @@ const Race = () => {
         pos={raceInfo.pos}
         wrongText={raceInfo.wrongText}
         speed={raceInfo.speed}
+        errorsCount={raceInfo.errorsCount}
         onClick={() => onInputClick()}
       />
 

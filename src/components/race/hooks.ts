@@ -8,7 +8,8 @@ interface TRaceInfo {
   pos: number
   wrongText: string
   state: string
-  speed: number
+  speed: string
+  errorsCount: number
 }
 export const useRaceService = (raceService: TRaceService) => {
   const [ info, setInfo ] = useState<TRaceInfo>({
@@ -16,11 +17,12 @@ export const useRaceService = (raceService: TRaceService) => {
     pos: 0,
     wrongText: '',
     state: '',
-    speed: 0,
+    speed: '',
+    errorsCount: 0
   })
   useEffect(() => {
     const sub = raceService.subscribe(state => {
-      const { text, pos, wrongText, speed } = state.context
+      const { text, pos, wrongText, speed, errorsCount } = state.context
 
       setInfo({
         text,
@@ -28,6 +30,7 @@ export const useRaceService = (raceService: TRaceService) => {
         wrongText,
         speed,
         state: state.toStrings().join(' '),
+        errorsCount,
       })
       // console.log(state)
     })
