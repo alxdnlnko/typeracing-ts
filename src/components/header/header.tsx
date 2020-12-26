@@ -11,7 +11,7 @@ const Header = () => {
         <h3>Открытая игра</h3>
       </div>
       <div className={styles.user}>
-        <span>alxdnlnko</span>
+        <span>Username</span>
         <div className={styles.avatar}></div>
       </div>
     </div>

@@ -15,15 +15,15 @@ const Book = () => {
   return (
     <div className={styles.book}>
       <BookIcon />
-      <span>The Adventures of Huckleberry Finn, part 208</span>
+      <span>Book title, part 208</span>
     </div>
   )
 }
 
 const initialText = `
-  Я первый раз переживал подлинную, поднимавшуюся над самим собой мудрость,
-  даже боль и смерть не ощущавшуюся личным переживанием,
-  а считавшуюся надличностным объектом рассмотрения и наблюдения.
+  Как бы ни хоронили мы свои воспоминания, историю своей жизни не сотрёшь.
+  И как раз об этом лучше не забывать. Историю не стереть и не переделать.
+  Это всё равно что уничтожить самого себя.
 `
 
 const raceService = interpret(raceMachine)
@@ -35,7 +35,7 @@ const Race = () => {
 
   const [ raceInfo ] = useRaceService(raceService)
   useEffect(() => {
-    raceService.send({ type: 'INIT', text: initialText, countdown: 5 })
+    raceService.send({ type: 'INIT', text: initialText, countdown: 3 })
   }, [])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {

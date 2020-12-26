@@ -44,8 +44,13 @@
   line-height: 1.6em;
   letter-spacing: 1px;
 
+  .race[data-state~="waiting"] &,
   .race[data-state~="countdown.waiting"] & {
+    opacity: .4;
     filter: blur(.25em);
+  }
+  .race[data-state~="countdown.ready"] & {
+    opacity: .4;
   }
 }
 
@@ -72,10 +77,10 @@
         border-radius: .2em;
         z-index: -2;
 
-        animation: highlight-word .3s ease-out;
+        animation: highlight-word .1s ease-out;
         animation-fill-mode: backwards;
         @keyframes highlight-word {
-          from { transform: translateX(-5px); }
+          from { transform: translateX(-20%); }
         }
       }
     }
@@ -148,7 +153,7 @@
 
 .input {
   --text-color: var(--color-text-primary);
-  --border-color: var(--color-text-primary);
+  --border-color: var(--color-text-gray);
   --cursor-color: rgba(255,255,255,.3);
 
   padding: .5em 0;
@@ -161,7 +166,6 @@
   color: var(--text-color);
   white-space: pre;
   cursor: text;
-  opacity: .5;
   font-size: 1.6em;
 
   // border
@@ -178,19 +182,12 @@
   }
 
   .race[data-state~="race"][data-focused="false"] &:hover {
-    opacity: .8;
+    --border-color: var(--color-text-secondary);
   }
   .race[data-state~="waiting"][data-focused="true"] &,
   .race[data-state~="countdown"][data-focused="true"] &,
   .race[data-state~="race"][data-focused="true"] & {
-    opacity: 1;
-  }
-  .race[data-state~="race"] & {
-    animation: start-race .2s ease-out;
-    animation-fill-mode: backwards;
-    @keyframes start-race {
-      from { background: white; }
-    }
+    --border-color: var(--color-text-primary);
   }
 }
 .inputWrapper {
@@ -205,7 +202,7 @@
     &::before {
       content: "";
       position: absolute;
-      left: .3em;
+      left: .4em;
       right: .3em;
       bottom: -.1em;
       top: -.1em;
@@ -275,6 +272,10 @@
   right: 0;
   bottom: -1.2em;
 
+  .race[data-state~="finished"] & {
+    --stats-color: var(--color-text-primary);
+  }
+
   > span {
     margin-left: .6em;
     display: inline-block;
@@ -282,11 +283,6 @@
     font-size: .6em;
     line-height: .6em;
     color: var(--stats-color);
-    // background: rgba(255,255,255,.03);
-  }
-
-  .race[data-state~="race.finished"] & {
-    --stats-color: var(--color-text-primary);
   }
 }
 
