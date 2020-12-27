@@ -20,7 +20,7 @@ export const useRaceService = (raceService: TRaceService) => {
     state: [],
     speed: '',
     errorsCount: 0,
-    countdown: 0
+    countdown: 0,
   })
   useEffect(() => {
     const sub = raceService.subscribe(state => {

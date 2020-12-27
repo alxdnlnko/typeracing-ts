@@ -12,7 +12,7 @@ const COUNTDOWN_READY_THRES: number = 2
 
 
 interface TRaceContext {
-  text: string|null
+  text: string
   pos: number
   wrongText: string
   raceStartTime: number
@@ -61,7 +61,7 @@ const machineConfig: TRaceMachineConfig = {
   initial: 'init',
   key: 'root',
   context: {
-    text: null,
+    text: '',
     pos: 0,
     wrongText: '',
     raceStartTime: -1,

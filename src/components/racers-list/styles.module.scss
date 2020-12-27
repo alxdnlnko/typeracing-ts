@@ -1,5 +1,9 @@
 .racersList {
   margin-top: 6em;
+
+  &[data-state~="init"] {
+    display: none;
+  }
 }
 
 .racer {

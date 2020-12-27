@@ -2,11 +2,11 @@
   "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "baseUrl": "./src",
-    "module": "ES2015",
+    "module": "CommonJS",
     "target": "es6",
     "strict": true,
     "jsx": "react",
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "importHelpers": true,
     "noEmitHelpers": true,
     "sourceMap": true,

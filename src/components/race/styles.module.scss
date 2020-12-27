@@ -3,6 +3,10 @@
   flex-direction: row;
   align-items: center;
 
+  .race[data-state~="init"] & {
+    display: none;
+  }
+
   > svg {
     top: 1px;
     display: inline-block;
@@ -43,6 +47,10 @@
   font-size: 1.3em;
   line-height: 1.6em;
   letter-spacing: 1px;
+
+  .race[data-state~="init"] & {
+    display: none;
+  }
 
   .race[data-state~="waiting"] &,
   .race[data-state~="countdown.waiting"] & {
@@ -175,6 +183,10 @@
     transition: border-color .1s ease-out;
   }
 
+  .race[data-state~="init"] & {
+    display: none;
+  }
+
   .race[data-state~="race"][data-focused="false"] &:hover {
     --border-color: var(--color-text-secondary);
   }
@@ -297,5 +309,16 @@
     font-size: .6em;
     line-height: .6em;
     color: var(--status-color);
+  }
+}
+
+.loading {
+  display: none;
+
+  padding: 5em 0;
+  text-align: center;
+
+  .race[data-state~="init"] & {
+    display: block;
   }
 }

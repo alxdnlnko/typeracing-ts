@@ -1,11 +1,10 @@
 import React, { useEffect, useState, KeyboardEvent, useRef, useCallback } from 'react'
-import { interpret } from 'xstate'
 import { Decimal } from 'decimal.js'
 
 import styles from './styles.module.scss'
 import BookIcon from './icons/book.svg'
 
-import raceMachine from '/services/race-machine'
+import { TRaceService } from '/services/race-machine'
 import { useRaceService } from './hooks'
 
 import RaceText from './race-text'
@@ -22,44 +21,37 @@ const Book = () => {
   )
 }
 
-const initialText = `
-  С необычайной быстротой она разобрала мой приёмник. Я любовался её ловкими руками с длинными, подвижными пальцами. Говорили мы немного. Она очень скоро поправила аппарат и ушла к себе.
-`
-
 const racer = {
   name: 'alxdnlnko',
   progressPerc: 0,
   finished: false
 }
 
-const raceService = interpret(raceMachine)
-raceService.start()
-
-const Race = () => {
+type TRaceProps = { raceService: TRaceService }
+const Race = ({ raceService }: TRaceProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [ isFocused, setFocused ] = useState<boolean>(false)
 
   const [ raceInfo ] = useRaceService(raceService)
-  useEffect(() => {
-    raceService.send({ type: 'INIT', text: initialText, countdown: 3 })
-  }, [])
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!e.isTrusted) {
-      e.preventDefault()
-      return
-    }
-    inputRef.current.value = ''
-    const { key } = e
+    if (!e.isTrusted) return
 
-    if (e.ctrlKey && e.keyCode === 65) {  // ctrl + a
-      raceService.send({ type: 'SELECT_ALL' })
-      e.preventDefault()
-      return
+    const { key, ctrlKey, keyCode } = e
+    if (ctrlKey) {
+      if (keyCode === 65) {  // ctrl + a
+        raceService.send({ type: 'SELECT_ALL' })
+        return
+      }
+      if (keyCode === 82) {  // ctrl + r
+        return
+      }
     }
+    e.stopPropagation()
+    e.preventDefault()
+
     if (key === 'Enter') {
       raceService.send({ type: 'START' })
-      e.preventDefault()
       return
     }
     if (key === 'Backspace') {
@@ -67,16 +59,13 @@ const Race = () => {
       else raceService.send({ type: 'DELETE_CHAR' })
       return
     }
-    if (e.ctrlKey) {
-      return
-    }
-    if (key.length !== 1) {
+    if (key.length !== 1 || ctrlKey) {
       return
     }
     setTimeout(() => {
       raceService.send({ type: 'KEY_DOWN', key })
     }, 0)
-  }, [ inputRef.current ])
+  }, [])
 
   const onInputClick = useCallback(() => inputRef.current && inputRef.current.focus(), [ inputRef.current ])
 
@@ -95,6 +84,8 @@ const Race = () => {
 
   return (
     <div className={styles.race} data-state={statesStr} data-focused={isFocused}>
+      <div className={styles.loading}>Подключение...</div>
+
       <Book />
       <RaceText text={raceInfo.text} pos={raceInfo.pos} hideCursor={true} />
       <RaceInput
