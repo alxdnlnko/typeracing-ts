@@ -85,46 +85,48 @@
       }
     }
   }
+  .race[data-state~="race.invalid"] & {
+    &[data-wordstate="current"] {
+      &::before {
+        // background: var(--color-red);
+      }
+    }
+  }
 }
 
 .letter {
   display: inline-block;
   white-space: pre;
-
-  transform-origin: center;
-  transition:
-    opacity .03s ease-out,
-    transform .03s ease-out;
+  transition: opacity .03s ease-out;
 
   --cursor-bg: transparent;
 
   .race[data-state~="race"] & {
     &[data-letterstate="prev"] {
       opacity: .3;
-      // transform: scale(.85);
     }
 
     // caret
-    &[data-letterstate="current"] {
-      &::before {
-        content: "";
-        display: block;
-        position: absolute;
-        left: -1px;
-        bottom: 1px;
-        right: 0;
-        height: 1.5em;
-        background: var(--cursor-bg);
-        z-index: -1;
+    // &[data-letterstate="current"] {
+    //   &::before {
+    //     content: "";
+    //     display: block;
+    //     position: absolute;
+    //     left: -1px;
+    //     bottom: 1px;
+    //     right: 0;
+    //     height: 1.5em;
+    //     background: var(--cursor-bg);
+    //     z-index: -1;
 
-        // animation: cursor-move .05s ease-out;
-        // animation-fill-mode: backwards;
-        // transform-origin: center bottom;
-        // @keyframes cursor-move {
-        //   from { transform: translateX(-5px); }
-        // }
-      }
-    }
+    //     // animation: cursor-move .05s ease-out;
+    //     // animation-fill-mode: backwards;
+    //     // transform-origin: center bottom;
+    //     // @keyframes cursor-move {
+    //     //   from { transform: translateX(-5px); }
+    //     // }
+    //   }
+    // }
   }
 
   .race[data-state~="race.valid"] & {
@@ -135,6 +137,7 @@
   }
   .race[data-state~="race.invalid"] & {
     &[data-letterstate="current"] {
+      color: var(--color-red);
     }
   }
 }
@@ -212,18 +215,19 @@
   display: inline-block;
 
   .race[data-state~="race.invalid"] & {
-    &::before {
-      content: "";
-      position: absolute;
-      left: -1px;
-      right: -1px;
-      bottom: -1px;
-      top: -1px;
-      display: block;
-      background: var(--color-red);
-      border-radius: .2em;
-      z-index: -1;
-    }
+    color: var(--color-red);
+    // &::before {
+    //   content: "";
+    //   position: absolute;
+    //   left: -1px;
+    //   right: -1px;
+    //   bottom: -1px;
+    //   top: -1px;
+    //   display: block;
+    //   background: var(--color-red);
+    //   border-radius: .2em;
+    //   z-index: -1;
+    // }
   }
 }
 .inputCursor {

@@ -15,10 +15,9 @@ module.exports = {
   devServer: {
     contentBase: './dist',
     clientLogLevel: 'info',
+    host: '0.0.0.0',
     port: 8001,
-    allowedHosts: [
-      'intranet.stronglocal.com',
-    ],
+    allowedHosts: [ ],
     inline: true,
     historyApiFallback: true,
     watchOptions: {

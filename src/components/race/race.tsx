@@ -23,9 +23,7 @@ const Book = () => {
 }
 
 const initialText = `
-  Как бы ни хоронили мы свои воспоминания, историю своей жизни не сотрёшь.
-  И как раз об этом лучше не забывать. Историю не стереть и не переделать.
-  Это всё равно что уничтожить самого себя.
+  С необычайной быстротой она разобрала мой приёмник. Я любовался её ловкими руками с длинными, подвижными пальцами. Говорили мы немного. Она очень скоро поправила аппарат и ушла к себе.
 `
 
 const racer = {
@@ -84,7 +82,7 @@ const Race = () => {
 
   const statusText =
     raceInfo.state.includes('waiting')
-      ? `Ожидание игроков. Нажмите Enter, чтобы начать`
+      ? `Нажмите Enter, чтобы начать`
     : raceInfo.state.includes('countdown.waiting')
       ? `Старт через ${raceInfo.countdown} с.`
     : raceInfo.state.includes('countdown.ready')
@@ -93,8 +91,10 @@ const Race = () => {
 
   const perc = Decimal.div(raceInfo.pos, Decimal.div(raceInfo.text.length, 100)).toNumber()
 
+  const statesStr = raceInfo.state.join(' ')
+
   return (
-    <div className={styles.race} data-state={raceInfo.state.join(' ')} data-focused={isFocused}>
+    <div className={styles.race} data-state={statesStr} data-focused={isFocused}>
       <Book />
       <RaceText text={raceInfo.text} pos={raceInfo.pos} hideCursor={true} />
       <RaceInput
@@ -115,11 +115,12 @@ const Race = () => {
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         style={{
-          opacity: '0'
+          position: 'absolute',
+          opacity: '0',
         }}
       />
 
-      <RacersList racers={[ { ...racer, progressPerc: perc }, ]} />
+      <RacersList raceState={statesStr} racers={[ { ...racer, progressPerc: perc }, ]} />
     </div>
   )
 }
