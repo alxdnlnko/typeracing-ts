@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { interpret } from 'xstate'
 
 import raceMachine from '/services/race-machine'
+import appMachine from '/services/app-machine'
 
 import './global-styles.scss'
 import styles from './styles.module.scss'
@@ -16,6 +17,12 @@ const initialText = `
 
 const raceService = interpret(raceMachine)
 raceService.start()
+
+const appService = interpret(appMachine)
+appService.subscribe(state => {
+  console.log(state)
+})
+appService.start()
 
 const App = () => {
   // useEffect(() => {
