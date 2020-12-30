@@ -243,6 +243,7 @@ const machineConfig: TRaceMachineConfig = {
     }
   }
 }
+
 const machine = createMachine(machineConfig, {
   guards: {
     keyMatchesCurrentPos: ({ text, pos }, e) =>
@@ -314,13 +315,13 @@ const machine = createMachine(machineConfig, {
           0, Math.max(wrongText.replace(/[ ]+$/, '').lastIndexOf(' '), 0))
     }),
     setRaceStartTime: assign({
-      raceStartTime: (_) => +new Date(),
+      raceStartTime: (_) => +window.performance.now(),
     }),
     updateSpeed: assign({
       speed: ({ pos, raceStartTime, speed }, e) => {
         if (e.type !== 'KEY_DOWN') return speed
         const dPos = new Decimal(pos)
-        const dMinutes = new Decimal(+new Date() - raceStartTime).dividedBy(60000)
+        const dMinutes = new Decimal(+window.performance.now() - raceStartTime).dividedBy(60000)
         const res = dPos.dividedBy(dMinutes).toFixed(2)
         return res
       },

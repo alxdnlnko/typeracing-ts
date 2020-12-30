@@ -310,6 +310,16 @@
     line-height: .6em;
     color: var(--status-color);
   }
+
+  .race[data-state~="waiting"] & {
+    > span {
+      animation: status-pulse 1.3s ease-out infinite;
+      animation-fill-mode: backwards;
+      @keyframes status-pulse {
+        to { color: var(--color-text-primary); }
+      }
+    }
+  }
 }
 
 .loading {

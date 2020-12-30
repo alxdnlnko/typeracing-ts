@@ -6,29 +6,23 @@ import {
   Interpreter,
   spawn,
   SpawnedActorRef,
+  send,
 } from 'xstate'
 
-// import ConnMachine, { TConnContext, TConnEvent } from './conn-machine'
-
-
-type TConnEvent =
-  | { type: 'MESSAGE', message: string }
 
 interface TAppContext {
-  conn: SpawnedActorRef<any> | null
 }
 
 interface TAppStateSchema {
   states: {
     init: {}
-    connecting: {}
-    connected: {}
+    gettingRaceInfo: {}
   }
 }
 
 type TAppEvent =
   | { type: 'CONNECTED' }
-  | { type: 'MESSAGE', message: string }
+  | { type: 'INFO', data: { text: string } }
 
 
 type TAppMachineConfig = MachineConfig<TAppContext, TAppStateSchema, TAppEvent>
@@ -45,34 +39,16 @@ const machineConfig: TAppMachineConfig = {
   states: {
     init: {
       on: {
-        '': {
-          actions: assign({
-            conn: (_) => spawn((cb, onReceive) => {
-              const ws = new WebSocket('ws://localhost:8080/')
-              ws.addEventListener('open', () => {
-                cb({ type: 'CONNECTED' })
-              })
-              ws.addEventListener('message', (message) => {
-                cb({ type: 'MESSAGE', message: message.data })
-              })
-              onReceive((e) => {
-                if (e.type === 'MESSAGE') ws.send((e as TConnEvent).message)
-              })
-            })
-          }),
-          target: 'connecting',
+        CONNECTED: {
+          actions: 'apiGetRaceInfo',
+          target: 'gettingRaceInfo',
         }
       }
     },
-    connecting: {
+    gettingRaceInfo: {
       on: {
-        CONNECTED: 'connected'
-      }
-    },
-    connected: {
-      on: {
-        MESSAGE: {
-          actions: (_, e) => console.log(e)
+        INFO: {
+          actions: (ctx, e) => console.log(e.data)
         }
       }
     }
