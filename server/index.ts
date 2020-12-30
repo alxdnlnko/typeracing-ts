@@ -25,11 +25,25 @@ raceService.start()
 raceService.send({
   type: 'INIT',
   text: texts[Math.floor( Math.random() * texts.length )],
-  countdown: 10,
+  countdown: 5,
 })
 
 
+
+
+// хранить заезды, рэйсеров и сокеты в отдельных объектах по айдишнику
+// не связывать их друг с другом
+// пересылать евенты
+
+
+
 const clientHandler = (ws) => {
+  // authenticate
+  // create racer-machine, bind services
+  // add racer-machine to race-machine
+  // listen to racer ws and send events to racer machine
+  // racer-machine calls services to send updates via ws
+  //
   const send = (data: TServerToAppMessage) => {
     ws.send(JSON.stringify(data))
   }
