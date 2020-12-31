@@ -26,6 +26,7 @@ export class AppToServerAPI {
 
 export type TServerToAppMessage =
   | { type: 'RACE_INFO', info: TRaceInfo }
+  | { type: 'RACE_UPDATE' }
   | { type: 'PING' }
 
 type TServerSender = { send: (message: TServerToAppMessage) => void }
@@ -39,5 +40,9 @@ export class ServerToAppAPI {
 
   sendRaceInfo(info: TRaceInfo) {
     this.sender.send({ type: 'RACE_INFO', info })
+  }
+
+  updateRaceInfo() {
+    this.sender.send({ type: 'RACE_UPDATE' })
   }
 }
