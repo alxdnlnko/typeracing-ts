@@ -85,7 +85,7 @@ const notifyRacersInRace = (raceId: string) => {
   const race = Races.getById(raceId)
   Racers
     .filterByIds(race.racersIds)
-    .forEach(racer => racer.api.updateRaceInfo())
+    .forEach(racer => racer.api.updateRacers())
 }
 
 const clientHandler = (ws: WebSocket) => {
