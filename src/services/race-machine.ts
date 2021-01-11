@@ -10,8 +10,15 @@ import { Decimal } from 'decimal.js'
 
 const COUNTDOWN_READY_THRES: number = 2
 
+interface TRacerInfo {
+  id: string
+  name: string
+  progressPerc: number
+  finished: boolean
+}
 
 interface TRaceContext {
+  racerId: string
   text: string
   pos: number
   wrongText: string
@@ -20,6 +27,7 @@ interface TRaceContext {
   errorsCount: number
   lastErrorPos: number
   countdown: number
+  racers: Array<TRacerInfo>
 }
 
 interface TRaceStateSchema {
@@ -45,13 +53,14 @@ interface TRaceStateSchema {
 }
 
 type TRaceEvent =
-  | { type: 'INIT', text: string, countdown?: number }
+  | { type: 'INIT', text: string, racerId: string, racers: Array<TRacerInfo>, countdown?: number }
   | { type: 'START' }
   | { type: 'KEY_DOWN', key: string }
   | { type: 'DELETE_CHAR' }
   | { type: 'DELETE_WORD' }
   | { type: 'SELECT_ALL' }
   | { type: 'TIMER' }
+  | { type: 'RACER_CONNECTED', id: string, name: string }
 
 type TRaceMachineConfig = MachineConfig<TRaceContext, TRaceStateSchema, TRaceEvent>
 export type TRaceState = State<TRaceStateSchema, TRaceEvent>
@@ -61,6 +70,7 @@ const machineConfig: TRaceMachineConfig = {
   initial: 'init',
   key: 'root',
   context: {
+    racerId: '',
     text: '',
     pos: 0,
     wrongText: '',
@@ -69,6 +79,7 @@ const machineConfig: TRaceMachineConfig = {
     errorsCount: 0,
     lastErrorPos: -1,
     countdown: 10,
+    racers: [],
   },
   states: {
     init: {
@@ -76,6 +87,7 @@ const machineConfig: TRaceMachineConfig = {
         INIT: {
           target: 'waiting',
           actions: assign({
+            racerId: (_, { racerId }) => racerId,
             text: (_, { text }) =>
               text
                 .replace(/[\r\n\x0B\x0C\u0085\u2028\u2029]+/g, ' ')
@@ -89,6 +101,7 @@ const machineConfig: TRaceMachineConfig = {
             errorsCount: (_) => 0,
             lastErrorPos: (_) => -1,
             countdown: (_, { countdown }) => countdown || 10,
+            racers: (_, { racers }) => racers || [],
           }),
         }
       }
@@ -96,6 +109,10 @@ const machineConfig: TRaceMachineConfig = {
     waiting: {
       on: {
         START: 'countdown',
+        RACER_CONNECTED: {
+          internal: true,
+          actions: 'addNewRacer'
+        },
       },
       after: {
         15000: 'countdown',
@@ -264,6 +281,12 @@ const machine = createMachine(machineConfig, {
     isCountdownOver: ({ countdown }) => countdown <= 0 + 1,
   },
   actions: {
+    addNewRacer: assign({
+      racers: (ctx, e) => e.type === 'RACER_CONNECTED'
+        ? [ ...ctx.racers, { id: e.id, name: e.name, finished: false, progressPerc: 0 }]
+        : ctx.racers
+    }),
+
     incPos: assign({ pos: ({ pos }) => pos + 1 }),
     addKeyToWrongText: assign({
       wrongText: ({ wrongText }, e) => e.type === 'KEY_DOWN'

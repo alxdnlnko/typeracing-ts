@@ -1,7 +1,10 @@
+export type TRacerInfo = { id: string, name: string, progressPerc: number, finished: boolean }
 
 export interface TRaceInfo {
+  racerId: string
   text: string
   countdown: number
+  racers: Array<TRacerInfo>
 }
 
 export type TAppToServerMessage =
@@ -24,9 +27,12 @@ export class AppToServerAPI {
 
 
 
+export type TRacerPosInfo = { id: string, pos: number }
+export type TRacersPosInfo = Array<TRacerPosInfo>
 export type TServerToAppMessage =
   | { type: 'RACE_INFO', info: TRaceInfo }
-  | { type: 'UPDATE_RACERS' }
+  | { type: 'UPDATE_RACERS', info: TRacersPosInfo }
+  | { type: 'RACER_CONNECTED', info: TRacerInfo }
   | { type: 'PING' }
 
 type TServerSender = { send: (message: TServerToAppMessage) => void }
@@ -42,7 +48,11 @@ export class ServerToAppAPI {
     this.sender.send({ type: 'RACE_INFO', info })
   }
 
-  updateRacers() {
-    this.sender.send({ type: 'UPDATE_RACERS' })
+  racerConnected(info: TRacerInfo) {
+    this.sender.send({ type: 'RACER_CONNECTED', info })
+  }
+
+  updateRacers(info: TRacersPosInfo) {
+    this.sender.send({ type: 'UPDATE_RACERS', info })
   }
 }

@@ -13,11 +13,6 @@ import Race from '/components/race'
 import { AppToServerAPI, TAppToServerMessage, TServerToAppMessage } from '/shared/api'
 
 
-const initialText = `
-  С необычайной быстротой она разобрала мой приёмник. Я любовался её ловкими руками с длинными, подвижными пальцами. Говорили мы немного. Она очень скоро поправила аппарат и ушла к себе.
-`
-
-
 const ws = new WebSocket('ws://localhost:8080/')
 
 const send = (conn) => (data: TAppToServerMessage) => {
@@ -29,7 +24,7 @@ const appService = interpret(appMachine.withConfig({
   actions: {
     apiGetRaceInfo: () => {
       // ws.send(JSON.stringify({ type: 'INFO', raceId: '1' }))
-      api.getRaceInfo('1')
+      // api.getRaceInfo('1')
     }
   }
 }))
@@ -45,7 +40,18 @@ ws.addEventListener('message', (message) => {
   console.log(msg)
   switch (msg.type) {
     case 'RACE_INFO':
-      raceService.send({ type: 'INIT', text: msg.info.text, countdown: msg.info.countdown })
+      raceService.send({
+        type: 'INIT',
+        text: msg.info.text,
+        racerId: msg.info.racerId,
+        countdown: msg.info.countdown,
+        racers: msg.info.racers,
+      })
+      break
+    case 'UPDATE_RACERS':
+      break
+    case 'RACER_CONNECTED':
+      raceService.send({ type: 'RACER_CONNECTED', id: msg.info.id, name: msg.info.name })
       break
     case 'PING':
       api.pong()
@@ -66,13 +72,6 @@ raceService.start()
 
 
 const App = () => {
-
-  useEffect(() => {
-    // setTimeout(() => {
-    //   raceService.send({ type: 'INIT', text: initialText, countdown: 3 })
-    // }, 2000)
-  }, [])
-
   return (
     <div className={styles.app}>
       <Header />

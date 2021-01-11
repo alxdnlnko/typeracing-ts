@@ -4,6 +4,7 @@ import styles from './styles.module.scss'
 
 
 export interface TRacerInfo {
+  id: string
   name: string
   progressPerc: number
   finished: boolean

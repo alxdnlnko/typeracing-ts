@@ -111,7 +111,11 @@ const Race = ({ raceService }: TRaceProps) => {
         }}
       />
 
-      <RacersList raceState={statesStr} racers={[ { ...racer, progressPerc: perc }, ]} />
+      {/*
+        <RacersList raceState={statesStr} racers={[ { ...racer, progressPerc: perc }, ]} />
+      */}
+
+      <RacersList raceState={statesStr} racers={raceInfo.racers} />
     </div>
   )
 }

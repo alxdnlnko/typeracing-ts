@@ -3,7 +3,15 @@ import { useEffect, useState, KeyboardEvent, useRef } from 'react'
 import { TRaceService } from '/services/race-machine'
 
 
+interface TRacerInfo {
+  id: string
+  name: string
+  progressPerc: number
+  finished: boolean
+}
+
 interface TRaceInfo {
+  racerId: string
   text: string
   pos: number
   wrongText: string
@@ -11,9 +19,11 @@ interface TRaceInfo {
   speed: string
   errorsCount: number
   countdown: number
+  racers: Array<TRacerInfo>
 }
 export const useRaceService = (raceService: TRaceService) => {
   const [ info, setInfo ] = useState<TRaceInfo>({
+    racerId: '',
     text: '',
     pos: 0,
     wrongText: '',
@@ -21,12 +31,14 @@ export const useRaceService = (raceService: TRaceService) => {
     speed: '',
     errorsCount: 0,
     countdown: 0,
+    racers: [],
   })
   useEffect(() => {
     const sub = raceService.subscribe(state => {
-      const { text, pos, wrongText, speed, errorsCount, countdown } = state.context
+      const { racerId, text, pos, wrongText, speed, errorsCount, countdown, racers } = state.context
 
       setInfo({
+        racerId,
         text,
         pos,
         wrongText,
@@ -34,6 +46,7 @@ export const useRaceService = (raceService: TRaceService) => {
         state: state.toStrings(),
         errorsCount,
         countdown,
+        racers,
       })
       // console.log(state)
       // console.log(state.toStrings().join(' '), countdown)

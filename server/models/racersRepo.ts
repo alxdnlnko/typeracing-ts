@@ -3,6 +3,7 @@ import { ServerToAppAPI } from '../../src/shared/api'
 
 export interface TRacer {
   id: string
+  name: string
   pos: number
   raceId: string
   api: ServerToAppAPI
@@ -14,8 +15,9 @@ const racers: Record<string, TRacer> = {
 
 export const getById = (id: string) => racers[id] || null
 export const setById = (id: string, racer: TRacer) => { racers[id] = racer }
-export const initRacer = (id: string, api: ServerToAppAPI): TRacer => ({
+export const initRacer = (id: string, name: string, api: ServerToAppAPI): TRacer => ({
   id,
+  name,
   api,
   pos: 0,
   raceId: '',
